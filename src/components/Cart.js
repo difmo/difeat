@@ -35,17 +35,18 @@ const Cart = () => {
     <div className="min-h-screen bg-gray-100">
       <div className="max-w-4xl p-4 mx-auto bg-white rounded-md shadow-md sm:p-6 md:p-8">
         {/* Header */}
-        <div className="flex flex-col items-center justify-between mb-4 sm:mb-6 md:flex-row">
-          <h1 className="text-xl font-semibold md:text-2xl">
-            Cart Items - {cartItems.length}
-          </h1>
-          <button
-            className="px-3 py-1 text-sm text-white bg-red-500 rounded-md hover:bg-red-600"
-            onClick={handleClearCart}
-          >
-            Clear Cart
-          </button>
-        </div>
+        <div className="flex items-center justify-between mb-4">
+  <h1 className="text-lg font-semibold sm:text-xl md:text-2xl">
+    Cart Items - {cartItems.length}
+  </h1>
+  <button
+    className="px-2 py-1 text-xs text-white bg-red-500 rounded-md sm:text-sm hover:bg-red-600"
+    onClick={handleClearCart}
+  >
+    Clear Cart
+  </button>
+</div>
+
 
         {/* Location Section */}
         <div className="flex items-center justify-between p-4 mb-4 rounded-md bg-gray-50">
