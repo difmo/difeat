@@ -22,13 +22,13 @@ const Cart = () => {
   };
 
   return (
-    <div className="min-h-screen px-4 py-12 bg-gray-100">
-      <div className="max-w-4xl p-8 mx-auto bg-white rounded-lg shadow-md">
+    <div className="min-h-screen bg-gray-100">
+      <div className="max-w-4xl p-4 mx-auto bg-white rounded-md shadow-md sm:p-6 md:p-8">
         {/* Header */}
-        <div className="flex flex-col items-center justify-between mb-6 md:flex-row">
-          <h1 className="text-2xl font-bold md:text-3xl">Cart Items - {cartItems.length}</h1>
+        <div className="flex flex-col items-center justify-between mb-4 sm:mb-6 md:flex-row">
+          <h1 className="text-xl font-semibold md:text-2xl">Cart Items - {cartItems.length}</h1>
           <button
-            className="px-4 py-2 mt-4 text-white bg-red-500 rounded-lg hover:bg-red-600 md:mt-0"
+            className="px-3 py-1 text-sm text-white bg-red-500 rounded-md hover:bg-red-600"
             onClick={handleClearCart}
           >
             Clear Cart
@@ -37,14 +37,14 @@ const Cart = () => {
 
         {/* Empty Cart Message */}
         {cartItems.length === 0 ? (
-          <div className="flex flex-col items-center py-20 text-center">
-            <h2 className="text-xl font-semibold text-gray-600">Your Cart is Empty 🛒</h2>
-            <p className="mt-2 text-gray-500">Add items to the cart to see them here.</p>
+          <div className="flex flex-col items-center py-16 text-center">
+            <h2 className="text-lg font-semibold text-gray-600">Your Cart is Empty 🛒</h2>
+            <p className="mt-1 text-sm text-gray-500">Add items to the cart to see them here.</p>
           </div>
         ) : (
           <>
             {/* Cart Items */}
-            <div className="space-y-4">
+            <div className="space-y-3">
               {cartItems.map((item) => {
                 totalHandler(item?.price, item?.quantity);
                 return <FoodItemCart key={item.id} item={item} />;
@@ -52,15 +52,15 @@ const Cart = () => {
             </div>
 
             {/* Cart Summary */}
-            <div className="p-6 mt-8 border-t">
-              <div className="flex items-center justify-between text-xl font-semibold">
+            <div className="p-4 mt-6 border-t sm:p-6">
+              <div className="flex items-center justify-between text-lg font-semibold">
                 <span>Total:</span>
                 <span>&#8377; {(totalAmount.current / 100).toFixed(2)}</span>
               </div>
 
               {/* Checkout Button */}
               <button
-                className="w-full py-3 mt-6 text-lg font-bold text-white bg-indigo-600 rounded-lg hover:bg-indigo-700"
+                className="w-full py-2 mt-4 text-sm font-bold text-white bg-indigo-600 rounded-md hover:bg-indigo-700"
                 onClick={handleCheckoutCart}
               >
                 Proceed to Checkout
