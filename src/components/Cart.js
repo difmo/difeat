@@ -1,62 +1,109 @@
 import { useDispatch, useSelector } from "react-redux";
-import { clearCart } from "../utils/cartSlice";
 import FoodItemCart from "./FoodItemCart";
-import { useRef, useState } from "react";
+import { useState, useRef, useEffect } from "react";
+import { clearCart } from "../utils/cartSlice";
+
+const GST_RATE = 0.05;
+const DELIVERY_CHARGE = 40;
 
 const Cart = () => {
   const cartItems = useSelector((store) => store.cart.items);
   const dispatch = useDispatch();
-  let totalAmount = useRef(0);
-  const [location, setLocation] = useState("Lucknow, Uttar Pradesh");
 
-  const handleCheckoutCart = () => {
-    console.log("Proceeding to checkout...");
-    alert(`Total Payment: ₹${(totalAmount.current / 100).toFixed(2)}`);
+  const [locations, setLocations] = useState([]);
+  const [currentLocation, setCurrentLocation] = useState("Select Address");
+  const [showLocationModal, setShowLocationModal] = useState(false);
+  const [showAddAddressForm, setShowAddAddressForm] = useState(false);
+  const [newAddress, setNewAddress] = useState({});
+  const [selectedAddressIndex, setSelectedAddressIndex] = useState(null); // State for selected address index
+
+  const totalAmount = useRef(0);
+  const [tax, setTax] = useState(0);
+  const [grandTotal, setGrandTotal] = useState(0);
+
+  useEffect(() => {
+    calculateTotals();
+  }, [cartItems]);
+
+  const handleClearCart = () => dispatch(clearCart());
+
+  const handleLocationChange = (location) => {
+    setCurrentLocation(location);
+    setShowLocationModal(false);
   };
 
-  const handleClearCart = () => {
-    dispatch(clearCart());
+  const calculateTotals = () => {
+    totalAmount.current = cartItems.reduce(
+      (total, item) => total + item.price * item.quantity,
+      0
+    );
+    const calculatedTax = totalAmount.current * GST_RATE;
+    setTax(calculatedTax);
+    setGrandTotal(totalAmount.current + calculatedTax + DELIVERY_CHARGE);
   };
 
-  totalAmount.current = 0;
-  const totalHandler = (price, quantity) => {
-    totalAmount.current += price * quantity;
+  const handleAddressFormSubmit = (e) => {
+    e.preventDefault();
+    setLocations([...locations, newAddress]);
+    setCurrentLocation(newAddress.addressLine1);
+    setShowAddAddressForm(false);
+    setShowLocationModal(false);
+    setNewAddress({});
   };
 
-  // Mock delivery charges, taxes, and discounts
-  const deliveryFee = 3000; // 30.00 INR
-  const tax = totalAmount.current * 0.05; // 5% GST
-  const discount = 1000; // 10.00 INR discount
+  const handleInputChange = (e) => {
+    setNewAddress({ ...newAddress, [e.target.name]: e.target.value });
+  };
 
-  const grandTotal =
-    totalAmount.current + deliveryFee + tax - discount;
+  const handleAddressSelect = (index) => {
+    setSelectedAddressIndex(index);
+    setCurrentLocation(locations[index].addressLine1);
+    setShowLocationModal(!showLocationModal);
+  };
 
   return (
     <div className="min-h-screen bg-gray-100">
       <div className="max-w-4xl p-4 mx-auto bg-white rounded-md shadow-md sm:p-6 md:p-8">
         {/* Header */}
         <div className="flex items-center justify-between mb-4">
-  <h1 className="text-lg font-semibold sm:text-xl md:text-2xl">
-    Cart Items - {cartItems.length}
-  </h1>
-  <button
-    className="px-2 py-1 text-xs text-white bg-red-500 rounded-md sm:text-sm hover:bg-red-600"
-    onClick={handleClearCart}
-  >
-    Clear Cart
-  </button>
-</div>
-
-
-        {/* Location Section */}
-        <div className="flex items-center justify-between p-4 mb-4 rounded-md bg-gray-50">
-          <span className="text-sm font-medium text-gray-600">
-            Delivery Location:
-          </span>
-          <span className="text-sm font-semibold">{location}</span>
+          <h1 className="text-lg font-semibold sm:text-xl md:text-2xl">
+            Cart Items - {cartItems.length}
+          </h1>
+          <button
+            className="px-3 py-1 text-sm text-white bg-red-500 rounded-md hover:bg-red-600"
+            onClick={handleClearCart}
+          >
+            Clear Cart
+          </button>
         </div>
 
-        {/* Empty Cart Message */}
+        {/* Address Section */}
+        <div className="flex items-center justify-between mb-6">
+          <div
+            className="flex items-center gap-2 cursor-pointer"
+            onClick={() => setShowLocationModal(true)}
+          >
+            <span className="text-sm font-semibold text-gray-700">
+              {currentLocation}
+            </span>
+            <svg
+              className="w-4 h-4 text-gray-500"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              viewBox="0 0 24 24"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="M19 9l-7 7-7-7"
+              ></path>
+            </svg>
+          </div>
+        </div>
+
+        {/* Cart Items and Summary */}
         {cartItems.length === 0 ? (
           <div className="flex flex-col items-center py-16 text-center">
             <h2 className="text-lg font-semibold text-gray-600">
@@ -68,47 +115,141 @@ const Cart = () => {
           </div>
         ) : (
           <>
-            {/* Cart Items */}
             <div className="space-y-3">
-              {cartItems.map((item) => {
-                totalHandler(item?.price, item?.quantity);
-                return <FoodItemCart key={item.id} item={item} />;
-              })}
+              {cartItems.map((item) => (
+                <FoodItemCart key={item.id} item={item} />
+              ))}
             </div>
 
-            {/* Charges and Summary */}
             <div className="p-4 mt-6 border-t sm:p-6">
-              <div className="flex items-center justify-between text-sm">
+              <div className="flex items-center justify-between">
                 <span>Subtotal:</span>
-                <span>₹{(totalAmount.current / 100).toFixed(2)}</span>
+                <span>&#8377; {(totalAmount.current / 100).toFixed(2)}</span>
               </div>
-              <div className="flex items-center justify-between text-sm">
-                <span>Delivery Fee:</span>
-                <span>₹{(deliveryFee / 100).toFixed(2)}</span>
+              <div className="flex items-center justify-between">
+                <span>GST (5%):</span>
+                <span>&#8377; {(tax / 100).toFixed(2)}</span>
               </div>
-              <div className="flex items-center justify-between text-sm">
-                <span>Taxes (5% GST):</span>
-                <span>₹{(tax / 100).toFixed(2)}</span>
+              <div className="flex items-center justify-between">
+                <span>Delivery Charge:</span>
+                <span>&#8377; {(DELIVERY_CHARGE / 100).toFixed(2)}</span>
               </div>
-              <div className="flex items-center justify-between text-sm text-green-600">
-                <span>Discount:</span>
-                <span>-₹{(discount / 100).toFixed(2)}</span>
-              </div>
-
               <div className="flex items-center justify-between mt-4 text-lg font-semibold">
                 <span>Grand Total:</span>
-                <span>₹{(grandTotal / 100).toFixed(2)}</span>
+                <span>&#8377; {(grandTotal / 100).toFixed(2)}</span>
               </div>
-
-              {/* Checkout Button */}
               <button
                 className="w-full py-2 mt-4 text-sm font-bold text-white bg-indigo-600 rounded-md hover:bg-indigo-700"
-                onClick={handleCheckoutCart}
+                onClick={() => console.log("Proceeding to Checkout")}
               >
-                Proceed to Payment
+                Proceed to Checkout
               </button>
             </div>
           </>
+        )}
+
+        {/* Location Modal */}
+        {showLocationModal && (
+          <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
+            <div className="w-full max-w-sm p-4 bg-white rounded-md shadow-lg">
+              <div className="flex items-center justify-between mb-4">
+                <h2 className="text-lg font-semibold">Select or Add Address</h2>
+                <button
+                  className="text-gray-500 hover:text-gray-700"
+                  onClick={() => setShowLocationModal(false)}
+                >
+                  <svg
+                    className="w-5 h-5"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    viewBox="0 0 24 24"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      d="M6 18L18 6M6 6l12 12"
+                    ></path>
+                  </svg>
+                </button>
+              </div>
+              <button
+                className="w-full py-2 text-sm text-white bg-green-500 rounded-md hover:bg-green-600"
+                onClick={() => setShowAddAddressForm(true)}
+              >
+                Add New Address
+              </button>
+
+              {locations.map((address, index) => (
+                <div key={index} className="flex items-center">
+                  <input
+                    type="radio" // Changed to radio button for single select
+                    checked={selectedAddressIndex === index}
+                    onChange={() => handleAddressSelect(index)}
+                    className="mr-2"
+                  />
+                  <div>
+                    <p>{address.fullName}</p>
+                    <p>{address.mobile}</p>
+                    <p>
+                      {address.addressLine1}, {address.city}, {address.pinCode}
+                    </p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* Add Address Form */}
+        {showAddAddressForm && (
+          <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
+            <form
+              className="w-full max-w-md p-6 bg-white rounded-md"
+              onSubmit={handleAddressFormSubmit}
+            >
+              <h2 className="mb-4 text-lg font-semibold">Add New Address</h2>
+              <input
+                type="text"
+                name="fullName"
+                placeholder="Full Name"
+                className="w-full p-2 mb-2 border rounded-md"
+                onChange={handleInputChange}
+              />
+              <input
+                type="text"
+                name="mobile"
+                placeholder="Mobile Number"
+                className="w-full p-2 mb-2 border rounded-md"
+                onChange={handleInputChange}
+              />
+              <input
+                type="text"
+                name="addressLine1"
+                placeholder="Address Line 1"
+                className="w-full p-2 mb-2 border rounded-md"
+                onChange={handleInputChange}
+              />
+              <input
+                type="text"
+                name="city"
+                placeholder="City"
+                className="w-full p-2 mb-2 border rounded-md"
+                onChange={handleInputChange}
+              />
+              <input
+                type="text"
+                name="pinCode"
+                placeholder="Pin Code"
+                className="w-full p-2 mb-2 border rounded-md"
+                onChange={handleInputChange}
+              />
+              <button className="w-full py-2 mt-4 text-white bg-indigo-600 rounded-md hover:bg-indigo-700">
+                Save Address
+              </button>
+            </form>
+          </div>
         )}
       </div>
     </div>
