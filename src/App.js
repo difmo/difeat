@@ -16,7 +16,7 @@ import { Provider } from "react-redux";
 import Cart from "./components/Cart";
 import Login from "./components/Login";
 
-const Instamart = lazy(() => import("./components/Instamart"));
+const Contact = lazy(() => import("./components/Contact"));
 const About = lazy(() => import("./components/About"));
 // Chunking
 // Code Splitting
@@ -85,10 +85,10 @@ const appRouter = createBrowserRouter([
         element: <RestaurantMenu />,
       },
       {
-        path: "/instamart",
+        path: "/contact",
         element: (
           <Suspense fallback={<Shimmer />}>
-            <Instamart />
+            <Contact/>
           </Suspense>
         ),
       },

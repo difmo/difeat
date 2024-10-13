@@ -12,7 +12,7 @@ const Title = () => (
   <a href="/">
     <img
       className="w-[249px] h-auto"
-      alt="logo"
+      alt="DifEat"
       src={chef}
     />
   </a>
@@ -91,10 +91,10 @@ const Header = () => {
         </Link>
 
       <Link
-          to="/instamart"
+          to="/contact"
           className="px-1 transition-all duration-300 ease-in-out  text-[#fb0b0f] hover:text-orange-900 hover:bg-gray-200 hover:rounded"
         >
-          <li>Instamart</li>
+          <li>Contact</li>
       </Link>
       <li>
         <Link to="/cart" className="relative ">
