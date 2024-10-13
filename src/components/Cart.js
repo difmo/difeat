@@ -9,7 +9,7 @@ const Cart = () => {
   let totalAmount = useRef(0);
 
   const handleCheckoutCart = () => {
-   console.log((totalAmount.current / 100).toFixed(2));
+    console.log((totalAmount.current / 100).toFixed(2));
   };
 
   const handleClearCart = () => {
@@ -17,19 +17,20 @@ const Cart = () => {
   };
 
   totalAmount.current = 0;
-
   const totalHandler = (price, quantity) => {
-    totalAmount.current = Number(totalAmount.current) + price * quantity;
+    totalAmount.current += price * quantity;
   };
 
   return (
-    <div className="min-h-screen py-10 bg-gray-100">
-      <div className="md:w-3/5 w-[90%] mx-auto p-6 bg-white rounded-lg shadow-md">
+    <div className="min-h-screen px-4 py-12 bg-gray-100">
+      <div className="max-w-4xl p-8 mx-auto bg-white rounded-lg shadow-lg">
         {/* Header */}
-        <div className="flex items-center justify-between mb-6">
-          <h1 className="text-3xl font-semibold">Cart Items - {cartItems.length}</h1>
+        <div className="flex flex-col items-center justify-between mb-8 md:flex-row">
+          <h1 className="mb-4 text-3xl font-semibold md:mb-0">
+            Cart Items - {cartItems.length}
+          </h1>
           <button
-            className="px-4 py-2 text-sm font-medium text-white transition bg-red-500 rounded-lg hover:bg-red-600"
+            className="px-4 py-2 text-white transition bg-red-500 rounded-lg hover:bg-red-600"
             onClick={handleClearCart}
           >
             Clear Cart
@@ -53,16 +54,16 @@ const Cart = () => {
             </div>
 
             {/* Cart Summary */}
-            <div className="p-4 mt-8 border-t">
+            <div className="p-6 mt-8 border-t">
               <div className="flex items-center justify-between text-xl font-semibold">
                 <span>Total:</span>
                 <span>&#8377; {(totalAmount.current / 100).toFixed(2)}</span>
               </div>
 
               {/* Checkout Button */}
-              <button 
+              <button
                 className="w-full py-3 mt-6 text-lg font-bold text-white transition-all bg-indigo-600 rounded-lg hover:bg-indigo-700"
-              onClick={handleCheckoutCart}
+                onClick={handleCheckoutCart}
               >
                 Proceed to Checkout
               </button>
