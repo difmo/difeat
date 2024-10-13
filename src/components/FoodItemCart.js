@@ -15,14 +15,12 @@ const FoodItemCart = ({ item }) => {
 
   return (
     <div className="flex items-center gap-3 p-3 bg-white rounded-md shadow-sm hover:shadow-md">
-      {/* Image Section */}
       <img
         className="object-cover w-16 h-16 rounded-md sm:w-20 sm:h-20"
         src={IMG_CDN_URL + imageId}
         alt={name}
       />
 
-      {/* Details Section */}
       <div className="flex-1">
         <h2 className="text-sm font-semibold sm:text-base">{name}</h2>
         <p className="mt-1 text-xs text-gray-500 sm:text-sm">
@@ -33,7 +31,6 @@ const FoodItemCart = ({ item }) => {
         </h4>
       </div>
 
-      {/* Quantity Controls */}
       <div className="flex items-center gap-2">
         <button
           className="text-lg font-bold text-red-500 bg-gray-100 rounded-full w-7 h-7 hover:bg-red-200"
@@ -52,7 +49,6 @@ const FoodItemCart = ({ item }) => {
         </button>
       </div>
 
-      {/* Remove Button */}
       <button
         className="px-2 py-1 text-xs text-white bg-red-500 rounded-md hover:bg-red-600"
         onClick={handleRemoveItem}
