@@ -6,11 +6,13 @@ const Footer = () => {
   const { user } = useContext(userContext);
   return (
     <h4 className="p-10 mt-4 mx-auto items-center text-center text-white bg-[#000000]">
-      This site is developed with ♥️ by {user.name}{" "}
-      <i className="fab fa-react text-teal-400"></i> -{" "}
-      <a href="mailto: 1hiteshk@gmail.com" className="text-[#fd9133]">
+    Copyright @2024 {user.name}
+    
+         {/* {" "}
+       -{" "}
+      <a href="mailto: info@difmo.com" className="text-[#fb0b0f]">
         {user.email}
-      </a>
+      </a> */}
     </h4>
   );
 };

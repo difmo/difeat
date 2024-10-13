@@ -27,8 +27,8 @@ const About = lazy(() => import("./components/About"));
 
 const AppLayout = () => {
   const [user, setUser] = useState({
-    name: "namaste react",
-    email: "1hiteshk@gmail.com",
+    name: "Difmo Technologies",
+    email: "info@difmo.com",
   });
 
   return (
@@ -53,7 +53,7 @@ const appRouter = createBrowserRouter([
         path: "/about", // parentPath/{path} => localhost:1244/about
         element: (
           <Suspense
-            fallback={<h1 className="p-4 items-center">Loading....</h1>}
+            fallback={<h1 className="items-center p-4">Loading....</h1>}
           >
             <About />
           </Suspense>
@@ -70,8 +70,8 @@ const appRouter = createBrowserRouter([
         element: (
           <Body
             user={{
-              name: "namaste react",
-              email: "1hiteshk@gmail.com",
+              name: "Difmo Technologies",
+              email: "info@difmo.com",
             }}
           />
         ),

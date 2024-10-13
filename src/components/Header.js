@@ -1,5 +1,5 @@
 import { useContext, useEffect, useState } from "react";
-import chef from "../assets/chef.png";
+import chef from "../assets/logo.png";
 import { useLocation, useNavigate } from "react-router-dom";
 import { Link } from "react-router-dom";
 import useOnline from "../utils/useOnline";
@@ -11,12 +11,13 @@ import store from "../utils/store";
 const Title = () => (
   <a href="/">
     <img
-      className="h-14 w-14  md:w-14 md:h-14  lg:h-20 lg:w-20"
+      className="w-[249px] h-auto"
       alt="logo"
       src={chef}
     />
   </a>
 );
+
 
 const Header = () => {
   const token = localStorage.getItem("token");
@@ -51,11 +52,11 @@ const Header = () => {
   },[isLogin]);
 
   return (
-    <div className="sticky z-50 top-0 w-full flex justify-between items-center px-2 lg:px-6 md:px-8 py-1 shadow bg-[#fd9133] text-white">
-     <div className="flex items-center text-sm font-normal whitespace-nowrap gap-3 md:gap-6 md:font-semibold md:text-lg"> <Title />
-     {ctime}</div>
+    <div className="sticky top-0 z-50 flex items-center justify-between w-full px-2 py-1 text-[#fb0b0f] shadow bg-white lg:px-6 md:px-8">
+     <div className="flex items-center gap-3 text-sm font-normal whitespace-nowrap md:gap-6 md:font-semibold md:text-lg"> <Title />
+    </div>
      {/* <Timer /> */}
-      <ul className="flex items-center gap-3 lg:gap-6 md:gap-12 text-sm font-medium">
+      <ul className="flex items-center gap-3 mr-8 text-lg font-medium lg:gap-6 md:gap-12">
         {/* <li> <input  type="text"
           className="lg:w-64 md:w-50  h-6 text-md text-black border-b-2  border-gray-900 bg-white focus:bg-[#fd9133]  transition-all duration-300 px-2 rounded"
           placeholder="your location"
@@ -77,21 +78,21 @@ const Header = () => {
           clip-rule="evenodd" />
       </svg> */}
 
-      <Link to="/" className=" hover:text-orange-900 hover:bg-gray-200 hover:rounded px-1  transition-all duration-300 ease-in-out">
+      <Link to="/" className="px-1 transition-all duration-300 ease-in-out text-[#fb0b0f] hover:text-orange-900 hover:bg-gray-200 hover:rounded">
             <li>Home</li>
           </Link>
         
 
       <Link
           to="/about"
-          className=" hover:text-orange-900 hover:bg-gray-200 hover:rounded px-1  transition-all duration-300 ease-in-out"
+          className="px-1 transition-all duration-300 ease-in-out  text-[#fb0b0f] hover:text-orange-900 hover:bg-gray-200 hover:rounded"
         >
           <li>About</li>
         </Link>
 
       <Link
           to="/instamart"
-          className=" hover:text-orange-900 hover:bg-gray-200 hover:rounded px-1  transition-all duration-300 ease-in-out"
+          className="px-1 transition-all duration-300 ease-in-out  text-[#fb0b0f] hover:text-orange-900 hover:bg-gray-200 hover:rounded"
         >
           <li>Instamart</li>
       </Link>
@@ -99,7 +100,7 @@ const Header = () => {
         <Link to="/cart" className="relative ">
             <i className="fa-solid fa-cart-shopping">
               <span
-                className="absolute top-[-8px] right-[-12px] bg-white text-yellow-400 w-4 p-1  h-4 rounded-full text-[10px] flex justify-center items-center"
+                className="absolute top-[-8px] right-[-12px]  text-[#fb0b0f] bg-white text-[#fb0b0f] w-4 p-1  h-4 rounded-full text-[12px] flex justify-center items-center"
                 data-testid="cart"
               >
                 {cartItems.length}
@@ -128,11 +129,11 @@ const Header = () => {
               </button>
             )}
         </li>
-      </ul>
+     </ul>
       {/* <ul>
         <li>{isOnline ? "✅" : "🔴"}</li>
-        {/* <li className="font-bold text-purple-900">{user.name}</li> *
-      </ul> */}
+         <li className="font-bold text-purple-900">{user.name}</li> 
+      </ul>  */}
     </div>
   );
 };

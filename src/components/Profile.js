@@ -6,7 +6,7 @@ const Profile = (props) => {
   useEffect(() => {
     // API Call
     const timer = setInterval(() => {
-      console.log("NAMASTE REACT OP ");
+      console.log("Difmo Technologies ");
     }, 1000);
     console.log("useEffect");
 
