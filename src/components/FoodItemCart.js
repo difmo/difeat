@@ -6,7 +6,6 @@ const FoodItemCart = ({ item }) => {
   const { name, description, category, imageId, price, defaultPrice, quantity } = item;
   const dispatch = useDispatch();
 
-  // Truncate the description if it's longer than 26 characters
   const truncateDescription = (text, maxLength = 26) =>
     text.length > maxLength ? `${text.slice(0, maxLength)}...` : text;
 
@@ -15,10 +14,10 @@ const FoodItemCart = ({ item }) => {
   };
 
   return (
-    <div className="flex items-center gap-4 p-4 transition-shadow duration-300 bg-white rounded-lg shadow-md hover:shadow-lg md:gap-6">
+    <div className="flex items-center gap-4 p-4 transition-shadow bg-white rounded-lg shadow-sm hover:shadow-md md:gap-6">
       {/* Image Section */}
       <img
-        className="object-cover w-16 h-16 rounded-lg md:w-20 md:h-20"
+        className="object-cover w-20 h-20 rounded-md md:w-24 md:h-24"
         src={IMG_CDN_URL + imageId}
         alt={name}
       />
@@ -55,7 +54,7 @@ const FoodItemCart = ({ item }) => {
 
       {/* Remove Button */}
       <button
-        className="px-3 py-1 text-sm text-white transition-colors duration-300 bg-red-500 rounded-lg hover:bg-red-600"
+        className="px-3 py-1 text-sm text-white bg-red-500 rounded-lg hover:bg-red-600"
         onClick={handleRemoveItem}
       >
         Remove

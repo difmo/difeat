@@ -23,14 +23,12 @@ const Cart = () => {
 
   return (
     <div className="min-h-screen px-4 py-12 bg-gray-100">
-      <div className="max-w-4xl p-8 mx-auto bg-white rounded-lg shadow-lg">
+      <div className="max-w-4xl p-8 mx-auto bg-white rounded-lg shadow-md">
         {/* Header */}
-        <div className="flex flex-col items-center justify-between mb-8 md:flex-row">
-          <h1 className="mb-4 text-3xl font-semibold md:mb-0">
-            Cart Items - {cartItems.length}
-          </h1>
+        <div className="flex flex-col items-center justify-between mb-6 md:flex-row">
+          <h1 className="text-2xl font-bold md:text-3xl">Cart Items - {cartItems.length}</h1>
           <button
-            className="px-4 py-2 text-white transition bg-red-500 rounded-lg hover:bg-red-600"
+            className="px-4 py-2 mt-4 text-white bg-red-500 rounded-lg hover:bg-red-600 md:mt-0"
             onClick={handleClearCart}
           >
             Clear Cart
@@ -40,13 +38,13 @@ const Cart = () => {
         {/* Empty Cart Message */}
         {cartItems.length === 0 ? (
           <div className="flex flex-col items-center py-20 text-center">
-            <h2 className="text-2xl font-semibold text-gray-600">Your Cart is Empty 🛒</h2>
+            <h2 className="text-xl font-semibold text-gray-600">Your Cart is Empty 🛒</h2>
             <p className="mt-2 text-gray-500">Add items to the cart to see them here.</p>
           </div>
         ) : (
           <>
             {/* Cart Items */}
-            <div className="space-y-6">
+            <div className="space-y-4">
               {cartItems.map((item) => {
                 totalHandler(item?.price, item?.quantity);
                 return <FoodItemCart key={item.id} item={item} />;
@@ -62,7 +60,7 @@ const Cart = () => {
 
               {/* Checkout Button */}
               <button
-                className="w-full py-3 mt-6 text-lg font-bold text-white transition-all bg-indigo-600 rounded-lg hover:bg-indigo-700"
+                className="w-full py-3 mt-6 text-lg font-bold text-white bg-indigo-600 rounded-lg hover:bg-indigo-700"
                 onClick={handleCheckoutCart}
               >
                 Proceed to Checkout
