@@ -150,16 +150,18 @@ const Cart = () => {
 
         {/* Location Modal */}
         {showLocationModal && (
-          <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
-            <div className="w-full max-w-sm p-4 bg-white rounded-md shadow-lg">
-              <div className="flex items-center justify-between mb-4">
-                <h2 className="text-lg font-semibold">Select or Add Address</h2>
+          <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-60">
+            <div className="w-full max-w-md p-6 transition-transform transform scale-100 bg-white rounded-lg shadow-lg">
+              <div className="flex items-center justify-between mb-6">
+                <h2 className="text-xl font-bold text-gray-800">
+                  Select or Add Address
+                </h2>
                 <button
-                  className="text-gray-500 hover:text-gray-700"
+                  className="text-gray-500 transition duration-150 hover:text-red-500"
                   onClick={() => setShowLocationModal(false)}
                 >
                   <svg
-                    className="w-5 h-5"
+                    className="w-6 h-6"
                     fill="none"
                     stroke="currentColor"
                     strokeWidth="2"
@@ -174,30 +176,39 @@ const Cart = () => {
                   </svg>
                 </button>
               </div>
+
               <button
-                className="w-full py-2 text-sm text-white bg-green-500 rounded-md hover:bg-green-600"
+                className="w-full py-3 mb-4 text-sm text-white transition duration-150 bg-green-600 rounded-md hover:bg-green-700"
                 onClick={() => setShowAddAddressForm(true)}
               >
                 Add New Address
               </button>
 
-              {locations.map((address, index) => (
-                <div key={index} className="flex items-center">
-                  <input
-                    type="radio" // Changed to radio button for single select
-                    checked={selectedAddressIndex === index}
-                    onChange={() => handleAddressSelect(index)}
-                    className="mr-2"
-                  />
-                  <div>
-                    <p>{address.fullName}</p>
-                    <p>{address.mobile}</p>
-                    <p>
-                      {address.addressLine1}, {address.city}, {address.pinCode}
-                    </p>
+              <div className="overflow-y-auto max-h-60">
+                {locations.map((address, index) => (
+                  <div
+                    key={index}
+                    className="flex items-center p-3 mb-4 transition duration-150 bg-gray-100 rounded-md hover:bg-gray-200"
+                  >
+                    <input
+                      type="radio" // Radio button for single select
+                      checked={selectedAddressIndex === index}
+                      onChange={() => handleAddressSelect(index)}
+                      className="w-4 h-4 mr-3 text-green-600 border-gray-300 rounded focus:ring-green-500"
+                    />
+                    <div>
+                      <p className="font-semibold text-gray-800">
+                        {address.fullName}
+                      </p>
+                      <p className="text-gray-600">{address.mobile}</p>
+                      <p className="text-gray-600">
+                        {address.addressLine1}, {address.city},{" "}
+                        {address.pinCode}
+                      </p>
+                    </div>
                   </div>
-                </div>
-              ))}
+                ))}
+              </div>
             </div>
           </div>
         )}

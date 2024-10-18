@@ -130,10 +130,12 @@ const Header = () => {
             )}
         </li>
      </ul>
-      {/* <ul>
+      {
+        /* <ul>
         <li>{isOnline ? "✅" : "🔴"}</li>
          <li className="font-bold text-purple-900">{user.name}</li> 
-      </ul>  */}
+         </ul>*/
+         }
     </div>
   );
 };
