@@ -1,12 +1,10 @@
 import React, { useContext, useEffect, useState } from "react";
 import chef from "../assets/logo.png";
-import { useLocation, useNavigate } from "react-router-dom";
-import { Link } from "react-router-dom";
+import { useLocation, useNavigate, Link } from "react-router-dom";
 import useOnline from "../utils/useOnline";
 import userContext from "../utils/userContext";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 import BottomNav from "./BottomNav";
-
 
 const Title = () => (
   <a href="/">
@@ -23,7 +21,7 @@ const Header = () => {
   const { user } = useContext(userContext);
   const cartItems = useSelector((store) => store.cart.items);
   const [ctime, setCtime] = useState(new Date().toLocaleTimeString());
-  
+
   useEffect(() => {
     const interval = setInterval(() => {
       setCtime(new Date().toLocaleTimeString());
@@ -42,45 +40,91 @@ const Header = () => {
         <div className="flex items-center gap-3 text-sm font-normal whitespace-nowrap md:gap-6 md:font-semibold md:text-lg">
           <Title />
         </div>
-        <ul className="items-center hidden gap-3 mr-8 text-lg font-medium lg:flex lg:gap-6 md:gap-12">
-          <Link to="/" className="px-1 transition-all duration-300 ease-in-out text-[#fb0b0f] hover:text-orange-900 hover:bg-gray-200 hover:rounded">
-            <li>Home</li>
-          </Link>
-          <Link to="/about" className="px-1 transition-all duration-300 ease-in-out text-[#fb0b0f] hover:text-orange-900 hover:bg-gray-200 hover:rounded">
-            <li>About</li>
-          </Link>
-          <Link to="/contact" className="px-1 transition-all duration-300 ease-in-out text-[#fb0b0f] hover:text-orange-900 hover:bg-gray-200 hover:rounded">
-            <li>Contact</li>
-          </Link>
-          <li>
-            <Link to="/cart" className="relative ">
-              <i className="fa-solid fa-cart-shopping">
-                <span className="absolute top-[-8px] right-[-12px] text-[#fb0b0f] bg-white text-[#fb0b0f] w-4 p-1 h-4 rounded-full text-[12px] flex justify-center items-center" data-testid="cart">
-                  {cartItems.length}
-                </span>
-              </i>
-            </Link>
-          </li>
-          <li>
+        <div className="flex items-center gap-4">
+          {/* Show profile icon only in mobile view */}
+          <div className="flex items-center lg:hidden">
             {isLoggedin ? (
-              <button className="logout-btn" onClick={() => {
-                localStorage.removeItem("token");
-                setIsLoggedin(!isLoggedin);
-              }}>
-                Logout
-              </button>
+              <Link to="/profile" className="mr-4">
+                <i className="fa-solid fa-user-circle text-2xl text-[#fb0b0f]"></i> Login
+              </Link>
             ) : (
-              <button className="login-btn" onClick={() => {
-                navigate("/login", { state: { data: isLoggedin } });
-                setIsLoggedin(!isLoggedin);
-              }}>
-                Login
+              <button
+                onClick={() =>
+                  navigate("/login", { state: { data: isLoggedin } })
+                }
+                className=" mr-4 login-btn flex items-center text-[#fb0b0f] bg-transparent border-none cursor-pointer"
+              >
+                         <i className="fa-solid fa-user-circle text-2xl text-[#fb0b0f]"></i>
               </button>
             )}
-          </li>
-        </ul>
+          </div>
+
+          <ul className="items-center hidden gap-3 mr-8 text-lg font-medium lg:flex lg:gap-6 md:gap-12">
+            <Link
+              to="/"
+              className="px-1 transition-all duration-300 ease-in-out text-[#fb0b0f] hover:text-orange-900 hover:bg-gray-200 hover:rounded"
+            >
+              <li>Home</li>
+            </Link>
+            {/* Commented out About and Contact links for future use
+            <Link to="/about" className="px-1 transition-all duration-300 ease-in-out text-[#fb0b0f] hover:text-orange-900 hover:bg-gray-200 hover:rounded">
+              <li>About</li>
+            </Link>
+            <Link to="/contact" className="px-1 transition-all duration-300 ease-in-out text-[#fb0b0f] hover:text-orange-900 hover:bg-gray-200 hover:rounded">
+              <li>Contact</li>
+            </Link>
+            */}
+            <Link
+              to="/food"
+              className="px-1 transition-all duration-300 ease-in-out text-[#fb0b0f] hover:text-orange-900 hover:bg-gray-200 hover:rounded"
+            >
+              <li>Food</li>
+            </Link>
+            <Link
+              to="/water"
+              className="px-1 transition-all duration-300 ease-in-out text-[#fb0b0f] hover:text-orange-900 hover:bg-gray-200 hover:rounded"
+            >
+              <li>Water</li>
+            </Link>
+            <li>
+              <Link to="/cart" className="relative ">
+                <i className="fa-solid fa-cart-shopping">
+                  <span
+                    className="absolute top-[-8px] right-[-12px] text-[#fb0b0f] bg-white text-[#fb0b0f] w-4 p-1 h-4 rounded-full text-[12px] flex justify-center items-center"
+                    data-testid="cart"
+                  >
+                    {cartItems.length}
+                  </span>
+                </i>
+              </Link>
+            </li>
+            <li>
+              {isLoggedin ? (
+                <button
+                  className="logout-btn"
+                  onClick={() => {
+                    localStorage.removeItem("token");
+                    setIsLoggedin(!isLoggedin);
+                  }}
+                >
+                  Logout
+                </button>
+              ) : (
+                <button
+                  className="login-btn"
+                  onClick={() => {
+                    navigate("/login", { state: { data: isLoggedin } });
+                    setIsLoggedin(!isLoggedin);
+                  }}
+                >
+                  Login
+                </button>
+              )}
+            </li>
+          </ul>
+        </div>
       </div>
-      <BottomNav /> {/* Include the BottomNav component */}
+      <BottomNav />
     </>
   );
 };

@@ -29,9 +29,9 @@ const schema = Yup.object().shape({
       }
     }, []);
 
-    // useEffect(() => {
-    //   <Header />
-    // },[isLogin])
+    useEffect(() => {
+      <Header />
+    },[isLogin])
   
     function handleNavigate(values) {
       // setTimeout for navigate from login page to home page

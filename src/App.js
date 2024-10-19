@@ -15,6 +15,8 @@ import store from "./utils/store";
 import { Provider } from "react-redux";
 import Cart from "./components/Cart";
 import Login from "./components/Login";
+import Food from "./components/Food";
+import Water from "./components/Water";
 
 const Contact = lazy(() => import("./components/Contact"));
 const About = lazy(() => import("./components/About"));
@@ -72,10 +74,28 @@ const appRouter = createBrowserRouter([
           />
         ),
       },
-      // {
-      //   path: "/contact",
-      //   element: <Contact />,
-      // },
+      {
+        path: "/food",
+        element: (
+          <Food
+            user={{
+              name: "Difmo Technologies",
+              email: "info@difmo.com",
+            }}
+          />
+        ),
+      },
+      {
+        path: "/water",
+        element: (
+          <Water
+            user={{
+              name: "Difmo Technologies",
+              email: "info@difmo.com",
+            }}
+          />
+        ),
+      },
       {
         path: "/restaurant/:resId",
         element: <RestaurantMenu />,
