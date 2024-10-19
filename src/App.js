@@ -18,14 +18,10 @@ import Login from "./components/Login";
 
 const Contact = lazy(() => import("./components/Contact"));
 const About = lazy(() => import("./components/About"));
-// Chunking
-// Code Splitting
-// Dynamic Bundling
-// Lazy Loading
-// On Demand Loading
-// Dynamic Import
+
 
 const AppLayout = () => {
+  
   const [user, setUser] = useState({
     name: "Difmo Technologies",
     email: "info@difmo.com",
