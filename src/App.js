@@ -17,6 +17,8 @@ import Cart from "./components/Cart";
 import Login from "./components/Login";
 import Food from "./components/Food";
 import Water from "./components/Water";
+import TermsAndConditions from "./components/TermsAndConditions";
+import PrivacyPolicy from "./components/PrivacyPolicy";
 
 const Contact = lazy(() => import("./components/Contact"));
 const About = lazy(() => import("./components/About"));
@@ -115,6 +117,14 @@ const appRouter = createBrowserRouter([
       {
         path: "/login",
         element: <Login />
+      },
+      {
+        path: "/terms",
+        element: <TermsAndConditions />,
+      },
+      {
+        path: "/privacy",
+        element: <PrivacyPolicy />,
       },
     ],
   },
