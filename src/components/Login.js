@@ -97,7 +97,6 @@ const Login = () => {
         phoneNumber: user.phoneNumber,
         createdAt: new Date().toISOString(),
       });
- callsumFuction();
       // Maintain login state in the web app
       localStorage.setItem("token", user.accessToken); // Storing the access token
       localStorage.setItem("isLoggedIn", "true"); // Storing login state
