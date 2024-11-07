@@ -113,9 +113,6 @@ const Login = () => {
         createdAt: new Date().toISOString(),
       });
   
-      // Trigger additional functions (e.g., logging, analytics, etc.)
-      callsumFuction();
-  
       // Save the user's access token and login state in localStorage
       localStorage.setItem("token", user.accessToken);
       localStorage.setItem("isLoggedIn", "true");
