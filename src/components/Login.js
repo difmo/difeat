@@ -139,14 +139,14 @@ const Login = () => {
         <p className="mt-4 text-sm text-center text-gray-500">
           By clicking on Login, I accept the{" "}
           <a
-            href="/terms"
+            href="/terms-and-conditions"
             className="text-orange-500 underline hover:text-orange-600"
           >
             Terms & Conditions
           </a>{" "}
           &{" "}
           <a
-            href="/privacy"
+            href="/privacy-policy"
             className="text-orange-500 underline hover:text-orange-600"
           >
             Privacy Policy

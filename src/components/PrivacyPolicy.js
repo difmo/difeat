@@ -10,7 +10,7 @@ const PrivacyPolicy = () => {
             Privacy Policy
           </h1>
           <p className="mb-8 text-lg text-center text-gray-600">
-            Your privacy is important to us. Please read our policy carefully to understand how we collect, use, and protect your information.
+            Your privacy is our priority. Please review our policy to understand how we handle your data.
           </p>
         </div>
       </section>
@@ -23,7 +23,8 @@ const PrivacyPolicy = () => {
             <div className="p-8 bg-white rounded-lg shadow-md">
               <h2 className="mb-4 text-2xl font-bold">1. Information We Collect</h2>
               <p className="text-gray-600">
-                We collect personal information when you register on our platform, place orders, or use our services. This may include your name, email, phone number, and address.
+                We collect personal information necessary for delivering our services, such as your name, contact details, and delivery address. We may also collect
+                location data to facilitate accurate and timely deliveries and improve our service in your area.
               </p>
             </div>
 
@@ -31,7 +32,8 @@ const PrivacyPolicy = () => {
             <div className="p-8 bg-white rounded-lg shadow-md">
               <h2 className="mb-4 text-2xl font-bold">2. How We Use Your Information</h2>
               <p className="text-gray-600">
-                We use your information to process orders, provide customer service, and improve our platform. We may also send you promotional emails or notifications related to your orders.
+                Your information is used primarily to process orders, ensure accurate deliveries, and provide customer support. Additionally, we may use your data to
+                personalize your experience, recommend products, and inform you about promotions, new offerings, or policy changes.
               </p>
             </div>
 
@@ -39,7 +41,8 @@ const PrivacyPolicy = () => {
             <div className="p-8 bg-white rounded-lg shadow-md">
               <h2 className="mb-4 text-2xl font-bold">3. Data Sharing & Third Parties</h2>
               <p className="text-gray-600">
-                We do not sell your data to third parties. However, we may share it with trusted partners who help us deliver services (e.g., payment processors or delivery partners).
+                We do not sell your information to third parties. We may share relevant data with our trusted partners (such as delivery providers or payment processors)
+                strictly for order fulfillment. Our partners are bound by confidentiality agreements to protect your privacy.
               </p>
             </div>
 
@@ -47,23 +50,35 @@ const PrivacyPolicy = () => {
             <div className="p-8 bg-white rounded-lg shadow-md">
               <h2 className="mb-4 text-2xl font-bold">4. Data Security</h2>
               <p className="text-gray-600">
-                We implement security measures  to protect your personal data from unauthorized access, loss, or misuse. However, no system is entirely secure, and we cannot guarantee absolute data security.
+                We implement robust security measures to safeguard your data from unauthorized access, alteration, and misuse. While we strive to use commercially acceptable
+                means to protect your personal data, please be aware that no method of transmission or storage is 100% secure.
               </p>
             </div>
 
             {/* Section 5 */}
             <div className="p-8 bg-white rounded-lg shadow-md">
-              <h2 className="mb-4 text-2xl font-bold">5. Your Rights & Choices</h2>
+              <h2 className="mb-4 text-2xl font-bold">5. Location-Based Services</h2>
               <p className="text-gray-600">
-                You have the right to access, modify, or delete your personal data. If you wish to opt out of promotional communications, you can do so at any time by contacting us.
+                For efficient deliveries, we may request access to your real-time location data. This helps our delivery partners accurately locate you for faster service.
+                You have control over location sharing and can manage this setting on your device.
               </p>
             </div>
 
             {/* Section 6 */}
             <div className="p-8 bg-white rounded-lg shadow-md">
-              <h2 className="mb-4 text-2xl font-bold">6. Changes to This Policy</h2>
+              <h2 className="mb-4 text-2xl font-bold">6. Your Rights & Choices</h2>
               <p className="text-gray-600">
-                We reserve the right to update this Privacy Policy at any time. Changes will be posted on this page, and your continued use of our platform will imply acceptance of the revised policy.
+                You have the right to access, modify, or delete your personal data. If you wish to opt out of marketing communications, you can do so by adjusting your preferences
+                in the app or contacting us directly. For privacy-related inquiries, please reach out to our support team.
+              </p>
+            </div>
+
+            {/* Section 7 */}
+            <div className="p-8 bg-white rounded-lg shadow-md">
+              <h2 className="mb-4 text-2xl font-bold">7. Changes to This Policy</h2>
+              <p className="text-gray-600">
+                We may update this Privacy Policy as needed to reflect changes in our practices, technology, or legal obligations. Any updates will be posted on this page, and
+                continued use of our services implies acceptance of the updated policy.
               </p>
             </div>
           </div>
@@ -75,7 +90,7 @@ const PrivacyPolicy = () => {
         <div className="max-w-6xl mx-auto text-center">
           <h2 className="mb-8 text-4xl font-bold">Need More Information?</h2>
           <p className="mb-6 text-lg text-gray-600">
-            If you have any questions about our Privacy Policy, feel free to contact us at{" "}
+            If you have questions about our Privacy Policy, please contact us at{" "}
             <span className="font-semibold text-indigo-600">info@difmo.com</span>.
           </p>
         </div>
