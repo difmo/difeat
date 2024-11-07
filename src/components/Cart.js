@@ -59,8 +59,8 @@ const Cart = () => {
     }
 
     const options = {
-      key: "rzp_live_F8aJ9OEd54kUEW", // Replace with your Razorpay key
-      amount:10 * 100, // Convert to smallest currency unit
+      key: "rzp_test_5JTg9I35AkiZMQ", // Replace with your Razorpay key
+      amount:(grandTotal), // Convert to smallest currency unit
       currency: "INR",
       name: "DifEat Services",
       description: "Order Payment",
