@@ -1,7 +1,6 @@
 import { initializeApp } from "firebase/app";
 import { getAuth, PhoneAuthProvider, RecaptchaVerifier ,signInWithCredential} from "firebase/auth";
-import { doc, setDoc } from "firebase/firestore";
-
+import { getFirestore, doc, setDoc } from "firebase/firestore";
 // Your web app's Firebase configuration
 const firebaseConfig = {
   apiKey: "AIzaSyAcyNrL_6sDErQXwG9-do3LANTMh6nQ0T4",
@@ -17,5 +16,6 @@ const firebaseConfig = {
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
+const firestore = getFirestore(app);
 
-export { auth, PhoneAuthProvider, RecaptchaVerifier ,signInWithCredential,setDoc,doc};
+export { auth, PhoneAuthProvider, RecaptchaVerifier ,signInWithCredential,setDoc,doc,firestore};

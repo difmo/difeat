@@ -8,7 +8,7 @@ import {
   RecaptchaVerifier,
   PhoneAuthProvider,
   signInWithCredential,
-  doc, setDoc
+  doc, setDoc,firestore
 } from "../../firebase";
 
 const phoneSchema = Yup.object().shape({
@@ -84,6 +84,7 @@ const Login = () => {
       console.error("Error in phone number verification:", error.message);
     }
   };
+
 
   const handleOtpSubmit = async (values) => {
     if (!verificationId) {
