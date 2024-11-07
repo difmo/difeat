@@ -8,6 +8,7 @@ import {
   RecaptchaVerifier,
   PhoneAuthProvider,
   signInWithCredential,
+  doc, setDoc
 } from "../../firebase";
 
 const phoneSchema = Yup.object().shape({
@@ -84,32 +85,49 @@ const Login = () => {
     }
   };
 
-  const handleOtpSubmit = (values) => {
+  const handleOtpSubmit = async (values) => {
     if (!verificationId) {
-      console.error("Verification ID is missing. Please request a new OTP.");
-      alert("Verification ID is missing. Please request a new OTP.");
+      const errorMessage = "Verification ID is missing. Please request a new OTP.";
+      console.error(errorMessage);
+      alert(errorMessage);
       return;
     }
+  
     try {
-      const credential = PhoneAuthProvider.credential(
-        verificationId,
-        values.otp
-      );
-
-      signInWithCredential(auth, credential) // Use signInWithCredential directly here
-        .then(() => {
-          console.log("Error verifying OTP:", auth.currentUser);
-          localStorage.setItem("token", "mock_token_value");
-          navigate("/"); // Redirect after OTP verification
-        })
-        .catch((error) => {
-          console.error("Error verifying OTP:", error);
-        });
-    } catch (e) {
-      console.error("Error verifying OTP:", e.message);
+      // Create a credential using the OTP and verification ID
+      const credential = PhoneAuthProvider.credential(verificationId, values.otp);
+  
+      // Attempt to sign in with the credential
+      const userCredential = await signInWithCredential(auth, credential);
+  
+      // Extract user data
+      const user = userCredential.user;
+      console.log("OTP verified successfully. User:", user);
+  
+      // Save user data to Firestore
+      const userDocRef = doc(firestore, "difeatusers", user.uid);
+      await setDoc(userDocRef, {
+        uid: user.uid,
+        phoneNumber: user.phoneNumber,
+        createdAt: new Date().toISOString(),
+      });
+  
+      // Trigger additional functions (e.g., logging, analytics, etc.)
+      callsumFuction();
+  
+      // Save the user's access token and login state in localStorage
+      localStorage.setItem("token", user.accessToken);
+      localStorage.setItem("isLoggedIn", "true");
+  
+      // Optionally redirect the user after successful login
+      navigate("/");
+  
+    } catch (error) {
+      // Handle errors gracefully and provide meaningful messages
+      console.error("Error verifying OTP:", error);
+      alert(`Error verifying OTP: ${error.message || error}`);
     }
   };
-
   return (
     <div className="flex items-center justify-center min-h-screen px-4 bg-gradient-to-br from-orange-100">
       <div className="w-full max-w-lg p-8 my-5 bg-white shadow-lg rounded-2xl lg:max-w-md sm:max-w-sm">
