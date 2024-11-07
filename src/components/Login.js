@@ -87,6 +87,7 @@ const Login = () => {
       
       signInWithCredential(auth, credential)  // Use signInWithCredential directly here
         .then(() => {
+          console.log("Error verifying OTP:", credential);
           localStorage.setItem("token", "mock_token_value");
           navigate("/"); // Redirect after OTP verification
         })
