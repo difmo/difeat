@@ -73,29 +73,41 @@ const Login = () => {
   
 
 
-  const handleOtpSubmit = (values) => {
+  const handleOtpSubmit = async (values) => {
     if (!verificationId) {
       console.error("Verification ID is missing. Please request a new OTP.");
       alert("Verification ID is missing. Please request a new OTP.");
       return;
     }
+    
     try {
-      const credential = PhoneAuthProvider.credential(
-        verificationId,
-        values.otp
-      );
+      const credential = PhoneAuthProvider.credential(verificationId, values.otp);
       
-      signInWithCredential(auth, credential)  // Use signInWithCredential directly here
-        .then(() => {
-          console.log("Error verifying OTP:", auth.currentUser);
-          localStorage.setItem("token", "mock_token_value");
-          navigate("/"); // Redirect after OTP verification
-        })
-        .catch((error) => {
-          console.error("Error verifying OTP:", error);
-        });
-    } catch (e) {
-      console.error("Error verifying OTP:", e.message);
+      // Verify OTP
+      const userCredential = await signInWithCredential(auth, credential);
+      
+      // Get user information
+      const user = userCredential.user;
+      console.log("OTP verified. User:", user);
+  
+      // Store user details in Firestore
+      const userDocRef = doc(firestore, "difeatusers", user.uid);
+      await setDoc(userDocRef, {
+        uid: user.uid,
+        phoneNumber: user.phoneNumber,
+        createdAt: new Date().toISOString(),
+      });
+  
+      // Maintain login state in the web app
+      localStorage.setItem("token", user.accessToken); // Storing the access token
+      localStorage.setItem("isLoggedIn", "true"); // Storing login state
+  
+      // Redirect to the desired page
+      navigate("/");
+  
+    } catch (error) {
+      console.error("Error verifying OTP:", error);
+      alert(`Error verifying OTP: ${error.message}`);
     }
   };
 
