@@ -44,23 +44,43 @@ const TermsAndConditions = () => {
 
           {/* Section 3 */}
           <div className="p-6 bg-white rounded-lg shadow-md md:p-8">
-            <h2 className="mb-3 text-xl font-semibold md:text-2xl">3. Payment & Refund Policy</h2>
+            <h2 className="mb-3 text-xl font-semibold md:text-2xl">3. Payment Policy</h2>
             <p className="text-gray-700">
-              All payments made through our app are final and non-refundable. Contact our support team for any order-related issues.
+              We use Razorpay as our payment gateway to process all transactions. By using this service, you agree to Razorpay's policies and terms of service.
+              All payments are encrypted and securely processed through Razorpay's servers.
             </p>
           </div>
 
           {/* Section 4 */}
           <div className="p-6 bg-white rounded-lg shadow-md md:p-8">
-            <h2 className="mb-3 text-xl font-semibold md:text-2xl">4. Limitation of Liability</h2>
+            <h2 className="mb-3 text-xl font-semibold md:text-2xl">4. Refund and Cancellation Policy</h2>
             <p className="text-gray-700">
-              We are not liable for damages arising from the use of our platform, beyond the value of purchased items.
+              Our refund and cancellation policy is in accordance with Razorpay's guidelines. If you have any issues with your order, please contact our support team.
+              Refunds will be processed within 7-10 business days and are subject to a transaction fee, as applicable.
             </p>
           </div>
 
           {/* Section 5 */}
           <div className="p-6 bg-white rounded-lg shadow-md md:p-8">
-            <h2 className="mb-3 text-xl font-semibold md:text-2xl">5. Changes to Terms</h2>
+            <h2 className="mb-3 text-xl font-semibold md:text-2xl">5. Security</h2>
+            <p className="text-gray-700">
+              Your payment information is handled securely and processed only by Razorpay. We do not store any credit card or bank account details on our servers.
+              Please review Razorpay's security policies for more information.
+            </p>
+          </div>
+
+          {/* Section 6 */}
+          <div className="p-6 bg-white rounded-lg shadow-md md:p-8">
+            <h2 className="mb-3 text-xl font-semibold md:text-2xl">6. Limitation of Liability</h2>
+            <p className="text-gray-700">
+              We are not liable for any damages or losses arising from transactions processed through Razorpay. Any issues related to the payment gateway must
+              be directed to Razorpay support.
+            </p>
+          </div>
+
+          {/* Section 7 */}
+          <div className="p-6 bg-white rounded-lg shadow-md md:p-8">
+            <h2 className="mb-3 text-xl font-semibold md:text-2xl">7. Changes to Terms</h2>
             <p className="text-gray-700">
               We reserve the right to modify these terms at any time. Continued use of the service implies acceptance of the updated terms.
             </p>
@@ -74,7 +94,7 @@ const TermsAndConditions = () => {
           <h2 className="mb-4 text-3xl font-semibold">Have Questions?</h2>
           <p className="mb-6 text-gray-600">
             If you have any questions about our terms and conditions, reach out to us at{" "}
-            <span className="font-semibold text-indigo-600">info@difmo.com</span>.
+            <span className="font-semibold text-indigo-600">difeatservices@gmail.com</span>.
           </p>
           <button
             onClick={() => navigate("/")}
