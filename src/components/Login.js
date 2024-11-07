@@ -11,8 +11,8 @@ const phoneSchema = Yup.object().shape({
     .required("Phone number is required")
     .matches(/^[6-9]\d{9}$/, "Enter a valid 10-digit phone number"),
   otp: Yup.string()
-    .min(4, "OTP must be 4 digits")
-    .max(4, "OTP must be 4 digits"),
+    .min(6, "OTP must be 6 digits")
+    .max(6, "OTP must be 6 digits"),
 });
 
 const Login = () => {
@@ -32,8 +32,7 @@ const Login = () => {
       //   // Response expired. Ask user to solve reCAPTCHA again.
       // }
       });
-
-      recaptchaVerifier.render().then(() => {
+recaptchaVerifier.render().then(() => {
         const phoneNumber = `+91${values.phone}`;
         const appVerifier = recaptchaVerifier;
         const provider = new PhoneAuthProvider(auth);
