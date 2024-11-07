@@ -1,6 +1,5 @@
-// firebaseConfig.js
 import { initializeApp } from "firebase/app";
-import { getAuth } from "firebase/auth";
+import { getAuth, PhoneAuthProvider, RecaptchaVerifier,signInWithPhoneNumber } from "firebase/auth";
 
 // Your web app's Firebase configuration
 const firebaseConfig = {
@@ -14,6 +13,8 @@ const firebaseConfig = {
   measurementId: "G-V3SL5V40WY"
 };
 
+// Initialize Firebase
 const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
 
-export const auth = getAuth(app);
+export { auth, PhoneAuthProvider, RecaptchaVerifier ,signInWithPhoneNumber};

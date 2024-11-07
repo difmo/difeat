@@ -3,8 +3,8 @@ import { Formik } from "formik";
 import * as Yup from "yup";
 import { useNavigate } from "react-router-dom";
 import chef from "../assets/food/vater.png";
-import { auth } from "../../firebase";  // Import auth from firebaseConfig
-import { RecaptchaVerifier, PhoneAuthProvider } from "firebase/auth";  // Modular imports for ReCAPTCHA and Phone Auth
+import { auth, RecaptchaVerifier, PhoneAuthProvider ,signInWithPhoneNumber} from "../../firebase";
+
 
 const phoneSchema = Yup.object().shape({
   phone: Yup.string()
@@ -20,42 +20,45 @@ const Login = () => {
   const [verificationId, setVerificationId] = useState(null);
   const navigate = useNavigate();
 
-  
   const handlePhoneSubmit = (values) => {
-    console.log("Sending OTP to:", values.phone); // Log the phone number
-    try{
-    const recaptchaVerifier = new RecaptchaVerifier("recaptcha-container", {
-      size: "invisible",
-      callback: (response) => {
-        console.log("ReCAPTCHA solved:", response);
-      },
-      "appVerificationDisabledForTesting": true  // Only for testing
-    }, auth);
-  
-    // Make sure reCAPTCHA is rendered
-    recaptchaVerifier.render().then(() => {
-      const phoneNumber = `+91${values.phone}`;
-      const appVerifier = recaptchaVerifier;
-  
-      const provider = new PhoneAuthProvider(auth);
-      provider.verifyPhoneNumber(phoneNumber, appVerifier)
-        .then((confirmationResult) => {
-          setVerificationId(confirmationResult.verificationId);
-          setOtpSent(true);
-          console.log("OTP sent successfully!");
-        })
-        .catch((error) => {
-          console.error("Error sending OTP:", error.message);
-          alert(`Error: ${error.message}`);
-        });
-    }).catch((error) => {
-      console.error("Error rendering reCAPTCHA:", error.message);
-    });
-  }catch(e){
-    console.log("Error rendering reCAPTCHA:", e.message);
-  }
+    console.log("Sending OTP to:", values.phone);
+    try {
+      const recaptchaVerifier = new RecaptchaVerifier(auth, 'recaptcha-container', {
+        size: 'invisible', // Invisible reCAPTCHA
+        callback: (response) => {
+          console.log("ReCAPTCHA solved:", response);
+        },
+      //   'expired-callback': () => {
+      //   // Response expired. Ask user to solve reCAPTCHA again.
+      // }
+      });
+
+      recaptchaVerifier.render().then(() => {
+        const phoneNumber = `+91${values.phone}`;
+        const appVerifier = recaptchaVerifier;
+        const provider = new PhoneAuthProvider(auth);
+        provider.verifyPhoneNumber(phoneNumber, appVerifier)
+          .then((confirmationResult) => {
+            setVerificationId(confirmationResult.verificationId);
+            setOtpSent(true);
+            console.log("OTP sent successfully!");
+          })
+          .catch((error) => {
+            console.error("Error sending OTP:", error.message);
+            alert(`Error: ${error.message}`);
+          });
+
+      }).catch((error) => {
+        console.error("Error rendering reCAPTCHA:", error.message);
+      });
+
+    } catch (error) {
+      console.error("Error in phone number verification:", error.message);
+    }
   };
-  
+
+
+
 
   const handleOtpSubmit = (values) => {
     const credential = PhoneAuthProvider.credential(
@@ -195,8 +198,8 @@ const Login = () => {
           .
         </p>
       </div>
-            {/* Invisible reCAPTCHA container */}
-            <div id="recaptcha-container"></div>
+      {/* Invisible reCAPTCHA container */}
+      <div id="recaptcha-container"></div>
     </div>
   );
 };
