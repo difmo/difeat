@@ -1,5 +1,5 @@
 import { initializeApp } from "firebase/app";
-import { getAuth, PhoneAuthProvider, RecaptchaVerifier,signInWithPhoneNumber } from "firebase/auth";
+import { getAuth, PhoneAuthProvider, RecaptchaVerifier ,signInWithCredential} from "firebase/auth";
 
 // Your web app's Firebase configuration
 const firebaseConfig = {
@@ -17,4 +17,4 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 
-export { auth, PhoneAuthProvider, RecaptchaVerifier ,signInWithPhoneNumber};
+export { auth, PhoneAuthProvider, RecaptchaVerifier ,signInWithCredential};
