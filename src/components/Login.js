@@ -3,8 +3,12 @@ import { Formik } from "formik";
 import * as Yup from "yup";
 import { useNavigate } from "react-router-dom";
 import chef from "../assets/food/vater.png";
-import { auth, RecaptchaVerifier, PhoneAuthProvider ,signInWithCredential} from "../../firebase";
-
+import {
+  auth,
+  RecaptchaVerifier,
+  PhoneAuthProvider,
+  signInWithCredential,
+} from "../../firebase";
 
 const phoneSchema = Yup.object().shape({
   phone: Yup.string()
@@ -22,91 +26,87 @@ const Login = () => {
 
   const handlePhoneSubmit = (values) => {
     console.log("Sending OTP to:", values.phone);
-  
+
     try {
       // Initialize RecaptchaVerifier
-      const recaptchaVerifier = new RecaptchaVerifier(auth,'recaptcha-container', {
-        size: 'invisible',
-        callback: (response) => {
-          console.log("ReCAPTCHA solved:", response);
+      const recaptchaVerifier = new RecaptchaVerifier(
+        auth,
+        "recaptcha-container",
+        {
+          size: "invisible",
+          callback: (response) => {
+            console.log("ReCAPTCHA solved:", response);
+          },
         }
-      }, );
-  
-      // Ensure recaptcha renders correctly
-      recaptchaVerifier.render().then((widgetId) => {
-        console.log("ReCAPTCHA rendered with widget ID:", widgetId);
-  
-        const phoneNumber = `+91${values.phone}`;
-        const provider = new PhoneAuthProvider(auth);
-  
-        // Request phone number verification
-        provider.verifyPhoneNumber(phoneNumber, recaptchaVerifier)
-          .then((confirmationResult) => {
-            // Log confirmation result to inspect object structure
-            console.log("Confirmation result object:", confirmationResult);
-            setVerificationId(confirmationResult);
-            setOtpSent(true);
-            console.log("OTP sent successfully with Verification ID:", confirmationResult.verificationId);
+      );
 
-            // // Check for verificationId
-            // if (confirmationResult && confirmationResult.verificationId) {
-            //   setVerificationId(confirmationResult.verificationId);
-            //   setOtpSent(true);
-            //   console.log("OTP sent successfully with Verification ID:", confirmationResult.verificationId);
-            // } else {
-            //   console.error("Verification ID is missing or undefined.");
-            // }
-          })
-          .catch((error) => {
-            console.error("Error sending OTP:", error.message);
-            alert(`Error: ${error.message}`);
-          });
-  
-      }).catch((error) => {
-        console.error("Error rendering reCAPTCHA:", error.message);
-      });
-  
+      // Ensure recaptcha renders correctly
+      recaptchaVerifier
+        .render()
+        .then((widgetId) => {
+          console.log("ReCAPTCHA rendered with widget ID:", widgetId);
+
+          const phoneNumber = `+91${values.phone}`;
+          const provider = new PhoneAuthProvider(auth);
+
+          // Request phone number verification
+          provider
+            .verifyPhoneNumber(phoneNumber, recaptchaVerifier)
+            .then((confirmationResult) => {
+              // Log confirmation result to inspect object structure
+              console.log("Confirmation result object:", confirmationResult);
+              setVerificationId(confirmationResult);
+              setOtpSent(true);
+              console.log(
+                "OTP sent successfully with Verification ID:",
+                confirmationResult.verificationId
+              );
+
+              // // Check for verificationId
+              // if (confirmationResult && confirmationResult.verificationId) {
+              //   setVerificationId(confirmationResult.verificationId);
+              //   setOtpSent(true);
+              //   console.log("OTP sent successfully with Verification ID:", confirmationResult.verificationId);
+              // } else {
+              //   console.error("Verification ID is missing or undefined.");
+              // }
+            })
+            .catch((error) => {
+              console.error("Error sending OTP:", error.message);
+              alert(`Error: ${error.message}`);
+            });
+        })
+        .catch((error) => {
+          console.error("Error rendering reCAPTCHA:", error.message);
+        });
     } catch (error) {
       console.error("Error in phone number verification:", error.message);
     }
   };
-  
 
-
-  const handleOtpSubmit = async (values) => {
+  const handleOtpSubmit = (values) => {
     if (!verificationId) {
       console.error("Verification ID is missing. Please request a new OTP.");
       alert("Verification ID is missing. Please request a new OTP.");
       return;
     }
-    
     try {
-      const credential = PhoneAuthProvider.credential(verificationId, values.otp);
-      
-      // Verify OTP
-      const userCredential = await signInWithCredential(auth, credential);
-      
-      // Get user information
-      const user = userCredential.user;
-      console.log("OTP verified. User:", user);
-  
-      // Store user details in Firestore
-      const userDocRef = doc(firestore, "difeatusers", user.uid);
-      await setDoc(userDocRef, {
-        uid: user.uid,
-        phoneNumber: user.phoneNumber,
-        createdAt: new Date().toISOString(),
-      });
-      // Maintain login state in the web app
-      localStorage.setItem("token", user.accessToken); // Storing the access token
-      localStorage.setItem("isLoggedIn", "true"); // Storing login state
-  
-      // Redirect to the desired page
-      navigate("/");
-  
-    } catch (error) {
-      console.error("Error verifying OTP:", error);
-      alert(`Error verifying OTP: ${error.message}`);
+      const credential = PhoneAuthProvider.credential(
+        verificationId,
+        values.otp
+      );
+
+      signInWithCredential(auth, credential) // Use signInWithCredential directly here
+        .then(() => {
+          console.log("Error verifying OTP:", auth.currentUser);
+          localStorage.setItem("token", "mock_token_value");
+          navigate("/"); // Redirect after OTP verification
+        })
+        .catch((error) => {
+          console.error("Error verifying OTP:", error);
+        });
+    } catch (e) {
+      console.error("Error verifying OTP:", e.message);
     }
   };
 
