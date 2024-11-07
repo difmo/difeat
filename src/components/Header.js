@@ -5,6 +5,8 @@ import useOnline from "../utils/useOnline";
 import userContext from "../utils/userContext";
 import { useSelector } from "react-redux";
 import BottomNav from "./BottomNav";
+import { auth ,signOut} from "../../firebase"
+
 
 const Title = () => (
   <a href="/">
@@ -34,6 +36,20 @@ const Header = () => {
 
   useEffect(() => {}, [isLogin]);
 
+  const handleLogout = () => {
+    signOut(auth)
+      .then(() => {
+        // On successful logout, clear the token and update the state
+        localStorage.removeItem("token");
+        setIsLoggedin(false);
+        // Optionally, navigate to the login page
+        navigate("/login");
+      })
+      .catch((error) => {
+        console.error("Error logging out:", error);
+      });
+  };
+
   return (
     <>
       <div className="sticky top-0 z-50 flex items-center justify-between w-full px-2 py-1 text-[#fb0b0f] shadow bg-white lg:px-6 md:px-8">
@@ -45,16 +61,14 @@ const Header = () => {
           <div className="flex items-center lg:hidden">
             {isLoggedin ? (
               <Link to="/profile" className="mr-4">
-                <i className="fa-solid fa-user-circle text-2xl text-[#fb0b0f]"></i> Login
+                <i className="fa-solid fa-user-circle text-2xl text-[#fb0b0f]"></i> Profile
               </Link>
             ) : (
               <button
-                onClick={() =>
-                  navigate("/login", { state: { data: isLoggedin } })
-                }
-                className=" mr-4 login-btn flex items-center text-[#fb0b0f] bg-transparent border-none cursor-pointer"
+                onClick={() => navigate("/login", { state: { data: isLoggedin } })}
+                className="mr-4 login-btn flex items-center text-[#fb0b0f] bg-transparent border-none cursor-pointer"
               >
-                         <i className="fa-solid fa-user-circle text-2xl text-[#fb0b0f]"></i>
+                <i className="fa-solid fa-user-circle text-2xl text-[#fb0b0f]"></i> Login
               </button>
             )}
           </div>
@@ -66,14 +80,6 @@ const Header = () => {
             >
               <li>Home</li>
             </Link>
-            {/* Commented out About and Contact links for future use
-            <Link to="/about" className="px-1 transition-all duration-300 ease-in-out text-[#fb0b0f] hover:text-orange-900 hover:bg-gray-200 hover:rounded">
-              <li>About</li>
-            </Link>
-            <Link to="/contact" className="px-1 transition-all duration-300 ease-in-out text-[#fb0b0f] hover:text-orange-900 hover:bg-gray-200 hover:rounded">
-              <li>Contact</li>
-            </Link>
-            */}
             <Link
               to="/food"
               className="px-1 transition-all duration-300 ease-in-out text-[#fb0b0f] hover:text-orange-900 hover:bg-gray-200 hover:rounded"
@@ -102,20 +108,14 @@ const Header = () => {
               {isLoggedin ? (
                 <button
                   className="logout-btn"
-                  onClick={() => {
-                    localStorage.removeItem("token");
-                    setIsLoggedin(!isLoggedin);
-                  }}
+                  onClick={handleLogout}
                 >
                   Logout
                 </button>
               ) : (
                 <button
                   className="login-btn"
-                  onClick={() => {
-                    navigate("/login", { state: { data: isLoggedin } });
-                    setIsLoggedin(!isLoggedin);
-                  }}
+                  onClick={() => navigate("/login", { state: { data: isLoggedin } })}
                 >
                   Login
                 </button>

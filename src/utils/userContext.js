@@ -1,12 +1,10 @@
 import { createContext } from "react";
 
 const userContext = createContext({
-   user: {
-    name: "Hitesh kumar",
-    email: "difeatservices@gmail.com",
-}
+  user: null, 
+  setUser: () => {}, 
 });
 
-userContext.displayName = "userContext"; // ye name react developer tools me show hoga in components
+userContext.displayName = "userContext";
 
 export default userContext;

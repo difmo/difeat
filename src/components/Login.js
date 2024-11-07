@@ -10,6 +10,8 @@ import {
   signInWithCredential,
   doc, setDoc,firestore
 } from "../../firebase";
+import { useContext } from "react";
+import userContext from "../utils/userContext";
 
 const phoneSchema = Yup.object().shape({
   phone: Yup.string()
@@ -24,6 +26,7 @@ const Login = () => {
   const [otpSent, setOtpSent] = useState(false);
   const [verificationId, setVerificationId] = useState(null);
   const navigate = useNavigate();
+  const { setUser } = useContext(userContext);
 
   const handlePhoneSubmit = (values) => {
     console.log("Sending OTP to:", values.phone);
@@ -113,6 +116,13 @@ const Login = () => {
         createdAt: new Date().toISOString(),
       });
   
+      const userData = {
+        uid: user.uid,
+        phoneNumber: user.phoneNumber,
+        displayName: user.displayName,
+        email: user.email,
+      };
+      setUser(userData); 
       // Save the user's access token and login state in localStorage
       localStorage.setItem("token", user.accessToken);
       localStorage.setItem("isLoggedIn", "true");

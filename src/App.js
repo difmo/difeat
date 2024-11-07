@@ -1,7 +1,7 @@
 import React, { lazy, Suspense, useState, useContext } from "react";
 import ReactDOM from "react-dom/client";
 import { createBrowserRouter, RouterProvider, Outlet } from "react-router-dom";
-import { Provider } from "react-redux";
+import { Provider, useSelector } from "react-redux"; // Import Provider from react-redux
 
 import Header from "./components/Header";
 import Body from "./components/Body";
@@ -27,19 +27,15 @@ const About = lazy(() => import("./components/About"));
 
 // Main Layout Component
 const AppLayout = () => {
-  const [user, setUser] = useState({
-    name: "Difeat Services",
-    email: "difeatservices@gmail.com",
-  });
-
+  const [user, setUser] = useState(null); // Manage the user state here
+  const cartItems = useSelector((state) => state.cart.items); // Access cart items from Redux state
+  
   return (
-    <Provider store={store}>
-      <userContext.Provider value={{ user, setUser }}>
-        <Header />
-        <Outlet />
-        <Footer />
-      </userContext.Provider>
-    </Provider>
+    <userContext.Provider value={{ user, setUser }}>
+      <Header cartItems={cartItems} />
+      <Outlet />
+      <Footer />
+    </userContext.Provider>
   );
 };
 
@@ -112,6 +108,10 @@ const appRouter = createBrowserRouter([
   },
 ]);
 
-// Render the app
+// Render the app inside the Redux Provider
 const root = ReactDOM.createRoot(document.getElementById("root"));
-root.render(<RouterProvider router={appRouter} />);
+root.render(
+  <Provider store={store}> {/* Wrap the entire app with the Provider */}
+    <RouterProvider router={appRouter} />
+  </Provider>
+);
