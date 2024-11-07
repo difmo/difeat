@@ -10,7 +10,7 @@ const Footer = () => {
           
           {/* Logo and Description */}
           <div className="flex flex-col items-center lg:items-start text-center lg:text-left lg:w-1/3 space-y-4">
-            <img src={logo} alt="Difmo Logo" className="h-16" />
+            <img src={logo} alt="Difeat Logo" className="h-16" />
             <p className="text-sm lg:text-base">
             Bringing Convenience and Quality to Your Doorstep
             </p>

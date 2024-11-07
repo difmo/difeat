@@ -28,8 +28,8 @@ const About = lazy(() => import("./components/About"));
 // Main Layout Component
 const AppLayout = () => {
   const [user, setUser] = useState({
-    name: "Difmo Technologies",
-    email: "info@difmo.com",
+    name: "Difeat Services",
+    email: "difeatservices@gmail.com",
   });
 
   return (
@@ -86,15 +86,15 @@ const appRouter = createBrowserRouter([
       },
       {
         path: "/",
-        element: <Body user={{ name: "Difmo Technologies", email: "info@difmo.com" }} />,
+        element: <Body user={{ name: "Difeat Services", email: "difeatservices@gmail.com" }} />,
       },
       {
         path: "/food",
-        element: <Food user={{ name: "Difmo Technologies", email: "info@difmo.com" }} />,
+        element: <Food user={{ name: "Difeat Services", email: "difeatservices@gmail.com" }} />,
       },
       {
         path: "/water",
-        element: <Water user={{ name: "Difmo Technologies", email: "info@difmo.com" }} />,
+        element: <Water user={{ name: "Difeat Services", email: "difeatservices@gmail.com" }} />,
       },
       {
         path: "/restaurant/:resId",

@@ -91,7 +91,7 @@ const PrivacyPolicy = () => {
           <h2 className="mb-8 text-4xl font-bold">Need More Information?</h2>
           <p className="mb-6 text-lg text-gray-600">
             If you have questions about our Privacy Policy, please contact us at{" "}
-            <span className="font-semibold text-indigo-600">info@difmo.com</span>.
+            <span className="font-semibold text-indigo-600">difeatservices@gmail.com</span>.
           </p>
         </div>
       </section>

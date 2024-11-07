@@ -3,7 +3,7 @@ import { createContext } from "react";
 const userContext = createContext({
    user: {
     name: "Hitesh kumar",
-    email: "info@difmo.com",
+    email: "difeatservices@gmail.com",
 }
 });
 
