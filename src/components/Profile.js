@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from "react";
-import { auth, firestore, storage } from "../../firebase"; // Assuming these are configured
-import { doc, getDoc, collection, getDocs, updateDoc, addDoc, deleteDoc,ref, uploadBytes, getDownloadURL } from "../../firebase";
-import { onAuthStateChanged, signOut } from "firebase/auth";
+import { 
+  auth, onAuthStateChanged, firestore, storage, signOut, PhoneAuthProvider, RecaptchaVerifier, 
+  signInWithCredential, doc, getDoc, collection, getDocs, updateDoc, addDoc, deleteDoc, 
+  ref, uploadBytes, getDownloadURL 
+} from "../../firebase";
 import { FaUserEdit, FaCamera, FaSignOutAlt, FaPlusCircle, FaTrashAlt, FaEdit } from "react-icons/fa";
-
 import { useNavigate } from "react-router-dom";
 
 const Profile = () => {
@@ -28,7 +29,7 @@ const Profile = () => {
         if (userDoc.exists()) {
           const userData = userDoc.data();
           setUserDetails(userData);
-          setEditFormData(userData);
+          setEditFormData({ displayName: userData.displayName, email: userData.email });
           setProfileImageUrl(userData.profileImageUrl || ""); // Set image URL if available
         }
 
@@ -69,7 +70,7 @@ const Profile = () => {
         setProfileImageUrl(imageUrl);
       }
 
-      const userDocRef = doc(firestore, "difeatusers", userDetails.uid);
+      const userDocRef = doc(firestore, "difeatusers", auth.currentUser.uid);
       await updateDoc(userDocRef, { ...editFormData, profileImageUrl: imageUrl });
       setUserDetails({ ...userDetails, ...editFormData, profileImageUrl: imageUrl });
       setIsEditingProfile(false);
@@ -93,7 +94,7 @@ const Profile = () => {
   // Add a new address
   const handleAddAddress = async () => {
     try {
-      const addressesCollectionRef = collection(firestore, "difeatusers", userDetails.uid, "addresses");
+      const addressesCollectionRef = collection(firestore, "difeatusers", auth.currentUser.uid, "addresses");
       const docRef = await addDoc(addressesCollectionRef, newAddress);
       setAddresses([...addresses, { id: docRef.id, ...newAddress }]);
       setNewAddress({ line1: "", city: "", zipCode: "" });
@@ -106,7 +107,7 @@ const Profile = () => {
   // Update an existing address
   const handleEditAddress = async (addressId) => {
     try {
-      const addressDocRef = doc(firestore, "difeatusers", userDetails.uid, "addresses", addressId);
+      const addressDocRef = doc(firestore, "difeatusers", auth.currentUser.uid, "addresses", addressId);
       await updateDoc(addressDocRef, isEditingAddress);
       setAddresses(addresses.map((address) => (address.id === addressId ? isEditingAddress : address)));
       setIsEditingAddress(null);
@@ -119,7 +120,7 @@ const Profile = () => {
   // Delete an address
   const handleDeleteAddress = async (addressId) => {
     try {
-      const addressDocRef = doc(firestore, "difeatusers", userDetails.uid, "addresses", addressId);
+      const addressDocRef = doc(firestore, "difeatusers", auth.currentUser.uid, "addresses", addressId);
       await deleteDoc(addressDocRef);
       setAddresses(addresses.filter((address) => address.id !== addressId));
       alert("Address deleted successfully.");
@@ -196,32 +197,70 @@ const Profile = () => {
                 className="border border-gray-300 p-2 rounded mb-2 w-full"
                 value={isEditingAddress.line1}
                 onChange={(e) => setIsEditingAddress({ ...isEditingAddress, line1: e.target.value })}
+                placeholder="Address Line 1"
               />
-              <button onClick={() => handleEditAddress(address.id)} className="bg-green-500 text-white px-2 py-1 rounded ml-2">Save</button>
+              <input
+                type="text"
+                className="border border-gray-300 p-2 rounded mb-2 w-full"
+                value={isEditingAddress.city}
+                onChange={(e) => setIsEditingAddress({ ...isEditingAddress, city: e.target.value })}
+                placeholder="City"
+              />
+              <input
+                type="text"
+                className="border border-gray-300 p-2 rounded mb-2 w-full"
+                value={isEditingAddress.zipCode}
+                onChange={(e) => setIsEditingAddress({ ...isEditingAddress, zipCode: e.target.value })}
+                placeholder="Zip Code"
+              />
+              <button onClick={() => handleEditAddress(address.id)} className="bg-blue-500 text-white px-4 py-2 rounded">Save</button>
             </div>
           ) : (
-            <div>
-              <p>{address.line1}, {address.city}, {address.zipCode}</p>
-              <button onClick={() => setIsEditingAddress(address)} className="text-blue-500">Edit</button>
-              <button onClick={() => handleDeleteAddress(address.id)} className="text-red-500 ml-2">Delete</button>
+            <div className="flex justify-between items-center">
+              <div>
+                <p>{address.line1}</p>
+                <p>{address.city}, {address.zipCode}</p>
+              </div>
+              <div className="flex items-center">
+                <button onClick={() => setIsEditingAddress(address)} className="text-blue-500 mr-2">
+                  <FaEdit />
+                </button>
+                <button onClick={() => handleDeleteAddress(address.id)} className="text-red-500">
+                  <FaTrashAlt />
+                </button>
+              </div>
             </div>
           )}
         </div>
       ))}
-      <input
-        type="text"
-        placeholder="New Address Line 1"
-        value={newAddress.line1}
-        onChange={(e) => setNewAddress({ ...newAddress, line1: e.target.value })}
-        className="border border-gray-300 p-2 rounded mb-2 w-full"
-      />
-      <button onClick={handleAddAddress} className="bg-blue-500 text-white px-4 py-2 rounded mt-2">
-        Add Address
-      </button>
-      
-      <button onClick={() => signOut(auth)} className="mt-4 flex items-center text-red-500">
-        <FaSignOutAlt className="mr-2" /> Logout
-      </button>
+      {/* New Address Form */}
+      <h4 className="mt-4">Add New Address</h4>
+      <div className="flex flex-col md:flex-row gap-2">
+        <input
+          type="text"
+          className="border border-gray-300 p-2 rounded mb-2 w-full"
+          value={newAddress.line1}
+          onChange={(e) => setNewAddress({ ...newAddress, line1: e.target.value })}
+          placeholder="Address Line 1"
+        />
+        <input
+          type="text"
+          className="border border-gray-300 p-2 rounded mb-2 w-full"
+          value={newAddress.city}
+          onChange={(e) => setNewAddress({ ...newAddress, city: e.target.value })}
+          placeholder="City"
+        />
+        <input
+          type="text"
+          className="border border-gray-300 p-2 rounded mb-2 w-full"
+          value={newAddress.zipCode}
+          onChange={(e) => setNewAddress({ ...newAddress, zipCode: e.target.value })}
+          placeholder="Zip Code"
+        />
+        <button onClick={handleAddAddress} className="bg-green-500 text-white px-4 py-2 rounded">
+          <FaPlusCircle className="inline mr-2" /> Add Address
+        </button>
+      </div>
     </div>
   );
 };
