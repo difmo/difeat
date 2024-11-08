@@ -5,8 +5,9 @@ import useOnline from "../utils/useOnline";
 import userContext from "../utils/userContext";
 import { useSelector } from "react-redux";
 import BottomNav from "./BottomNav";
-import { auth, signOut } from "../../firebase";
+import { auth, onAuthStateChanged, signOut } from "../../firebase";
 
+// Logo component
 const Title = () => (
   <a href="/">
     <img className="w-[249px] h-auto" alt="DifEat" src={chef} />
@@ -21,7 +22,7 @@ const Header = () => {
   const cartItems = useSelector((store) => store.cart.items);
 
   // Manage login state based on token presence
-  const [isLoggedin, setIsLoggedin] = useState(localStorage.getItem("token")?.length === 100);
+  const [isLoggedin, setIsLoggedin] = useState(!!localStorage.getItem("token"));
   const [city, setCity] = useState("");
   const [ctime, setCtime] = useState(new Date().toLocaleTimeString());
 
@@ -35,17 +36,34 @@ const Header = () => {
   }, []);
 
   useEffect(() => {
-    console.log("User login state changed:", isLoggedin);
-  }, [isLoggedin]);
+    // Listen for auth changes and update token and login state
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      if (user) {
+        // User is signed in, set token in localStorage if not already present
+        const token = localStorage.getItem("token") || "user-auth-token"; // replace with actual token if available
+        localStorage.setItem("token", token);
+        setIsLoggedin(true);
+        console.log("User logged in");
+      } else {
+        // User is signed out, clear token
+        localStorage.removeItem("token");
+        setIsLoggedin(false);
+        console.log("User logged out");
+      }
+    });
+
+    return () => unsubscribe();
+  }, []);
 
   const handleLogout = () => {
     signOut(auth)
       .then(() => {
-        // Successfully signed out, clear token and update login state
+        // Successfully signed out
+        console.log("User logged out successfully");
         localStorage.removeItem("token");
+        localStorage.setItem("isLoggedIn", "false");
         setIsLoggedin(false);
         navigate("/login");
-        console.log("User logged out successfully");
       })
       .catch((error) => {
         console.error("Error logging out:", error);

@@ -98,44 +98,59 @@ const Login = () => {
     }
   
     try {
-      // Create a credential using the OTP and verification ID
       const credential = PhoneAuthProvider.credential(verificationId, values.otp);
-  
-      // Attempt to sign in with the credential
       const userCredential = await signInWithCredential(auth, credential);
-  
-      // Extract user data
       const user = userCredential.user;
       console.log("OTP verified successfully. User:", user);
-  
-      // Save user data to Firestore
       const userDocRef = doc(firestore, "difeatusers", user.uid);
       await setDoc(userDocRef, {
         uid: user.uid,
         phoneNumber: user.phoneNumber,
         createdAt: new Date().toISOString(),
       });
-  
-      const userData = {
-        uid: user.uid,
-        phoneNumber: user.phoneNumber,
-        displayName: user.displayName,
-        email: user.email,
-      };
-      setUser(userData); 
-      // Save the user's access token and login state in localStorage
-      localStorage.setItem("token", user.accessToken);
-      localStorage.setItem("isLoggedIn", "true");
-  
-      // Optionally redirect the user after successful login
+      handleLogin(user);
       navigate("/");
   
     } catch (error) {
-      // Handle errors gracefully and provide meaningful messages
       console.error("Error verifying OTP:", error);
       alert(`Error verifying OTP: ${error.message || error}`);
     }
   };
+
+
+const handleLogin = (user) => {
+  if (user) {
+    console.log("User object received:", user); // Log the user object
+
+    const userData = {
+      uid: user.uid,
+      phoneNumber: user.phoneNumber,
+      displayName: user.displayName,
+      email: user.email,
+    };
+
+    console.log("Formatted user data:", userData); // Log formatted user data
+
+    // Set user data in local state
+    setUser(userData);
+    console.log("User state updated"); // Confirm user state update
+
+    // Get the access token and store it in localStorage
+    user.getIdToken().then((token) => {
+      console.log("Access token retrieved:", token); // Log the access token
+
+      localStorage.setItem("token", token);
+      localStorage.setItem("isLoggedIn", "true");
+      console.log("Token and login state saved to localStorage"); // Confirm storage
+
+    }).catch((error) => {
+      console.error("Error retrieving access token:", error); // Log any errors
+    });
+  } else {
+    console.log("No user data found"); // Log if no user data is present
+  }
+};
+
   return (
     <div className="flex items-center justify-center min-h-screen px-4 bg-gradient-to-br from-orange-100">
       <div className="w-full max-w-lg p-8 my-5 bg-white shadow-lg rounded-2xl lg:max-w-md sm:max-w-sm">
