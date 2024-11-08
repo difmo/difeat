@@ -80,7 +80,7 @@ const Header = () => {
           <div className="flex items-center lg:hidden">
             {isLoggedin ? (
               <Link to="/profile" className="mr-4">
-                <i className="fa-solid fa-user-circle text-2xl text-[#fb0b0f]"></i> Profile
+                <i className="fa-solid fa-user-circle text-2xl text-[#fb0b0f]"></i>
               </Link>
             ) : (
               <button
