@@ -20,8 +20,7 @@ const ItemList = ({items}) => {
       }));
     };
     
-    return(
-                <div className="">
+    return(<div className="">
           {items.map((item) => {
             return (
               <div  className="flex flex-col justify-between border-b pb-6 mb-4 gap-6 md:flex-row"

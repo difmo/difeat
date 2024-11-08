@@ -24,11 +24,7 @@ const RestrauntCard = (props) => {
           <div className="w-[4px] h-[4px] rounded-full bg-black"></div>
           <span className="">{costForTwo.toUpperCase()}</span>
         </div>
-        
-      {/* <h4>{user.name}</h4>     ye state vala h props drilling */}
-      {/* <h5 className="font-bold">
-        {user.name} - {user.email}   {/* ye useContexxt vala h 
-      </h5> */}
+      
     </div>
   );
 };

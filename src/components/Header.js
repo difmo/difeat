@@ -5,7 +5,7 @@ import useOnline from "../utils/useOnline";
 import userContext from "../utils/userContext";
 import { useSelector } from "react-redux";
 import BottomNav from "./BottomNav";
-import { auth, onAuthStateChanged, signOut } from "../../firebase";
+import { auth, onAuthStateChanged, signOut ,doc,firestore,getDoc} from "../../firebase";
 
 // Logo component
 const Title = () => (
@@ -19,6 +19,9 @@ const Header = () => {
   const location = useLocation();
   const isOnline = useOnline();
   const { user } = useContext(userContext);
+  const [userDetails, setUserDetails] = useState(null);
+  const [profileImageUrl, setProfileImageUrl] = useState("");
+  const [isLoading, setIsLoading] = useState(true);
   const cartItems = useSelector((store) => store.cart.items);
 
   // Manage login state based on token presence
@@ -36,38 +39,42 @@ const Header = () => {
   }, []);
 
   useEffect(() => {
- //Listen for auth changes and update token and login state
+    const fetchUserData = async (userUid) => {
+      try {
+        const userDocRef = doc(firestore, "difeatusers", userUid);
+        const userDoc = await getDoc(userDocRef);
+        if (userDoc.exists()) {
+          const userData = userDoc.data();
+          setUserDetails(userData);
+          setProfileImageUrl(userData.profileImageUrl || "");
+        }
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    
+
+
     const unsubscribe = onAuthStateChanged(auth, (user) => {
       if (user) {
-        // User is signed in, set token in localStorage if not already present
-        const token = localStorage.getItem("token") || "user-auth-token"; // replace with actual token if available
+        fetchUserData(user.uid);
+        const token = localStorage.getItem("token") || "user-auth-token"; 
         localStorage.setItem("token", token);
         setIsLoggedin(true);
         console.log("User logged in");
       } else {
-        // User is signed out, clear token
+        navigate("/login");
         localStorage.removeItem("token");
         setIsLoggedin(false);
         console.log("User logged out");
       }
     });
     return () => unsubscribe();
-  }, []);
+  }, [navigate]);
 
-  const handleLogout = () => {
-    signOut(auth)
-      .then(() => {
-        // Successfully signed out
-        console.log("User logged out successfully");
-        localStorage.removeItem("token");
-        localStorage.setItem("isLoggedIn", "false");
-        setIsLoggedin(false);
-        navigate("/login");
-      })
-      .catch((error) => {
-        console.error("Error logging out:", error);
-      });
-  };
+
 
   return (
     <>
@@ -114,8 +121,9 @@ const Header = () => {
             </li>
             <li>
               {isLoggedin ? (
-                <button onClick={handleLogout} className="logout-btn">
-                  Logout
+                <button onClick={() => navigate("/profile")} className="logout-btn">
+                  {/* {userDetails.displayName} */}
+                  Dinesh kumar
                 </button>
               ) : (
                 <button onClick={() => navigate("/login")} className="login-btn">

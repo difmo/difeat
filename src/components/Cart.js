@@ -2,25 +2,36 @@ import { useDispatch, useSelector } from "react-redux";
 import FoodItemCart from "./FoodItemCart";
 import { useState, useRef, useEffect } from "react";
 import { clearCart } from "../utils/cartSlice";
-
+import {
+  auth, firestore, collection, addDoc, updateDoc, deleteDoc, doc, getDocs
+} from "../../firebase";
+import { FaHome, FaBriefcase, FaBuilding, FaTrashAlt, FaEdit, FaPlusCircle } from "react-icons/fa";
 const GST_RATE = 0.05;
 const DELIVERY_CHARGE = 40;
 
 const Cart = () => {
+  const [addresses, setAddresses] = useState([]);
+  const [currentLocation, setCurrentLocation] = useState("Select Address");
+  const [showLocationModal, setShowLocationModal] = useState(false);
+
   const cartItems = useSelector((store) => store.cart.items);
   const dispatch = useDispatch();
 
-  const [locations, setLocations] = useState([]);
-  const [currentLocation, setCurrentLocation] = useState("Select Address");
-  const [showLocationModal, setShowLocationModal] = useState(false);
-  const [showAddAddressForm, setShowAddAddressForm] = useState(false);
-  const [newAddress, setNewAddress] = useState({});
-  const [selectedAddressIndex, setSelectedAddressIndex] = useState(null);
 
   const totalAmount = useRef(0);
   const [tax, setTax] = useState(0);
   const [grandTotal, setGrandTotal] = useState(0);
   const [isRazorpayLoaded, setIsRazorpayLoaded] = useState(false);
+
+  useEffect(() => {
+    const fetchAddresses = async () => {
+      const addressesCollectionRef = collection(firestore, "difeatusers", auth.currentUser.uid, "addresses");
+      const addressSnapshot = await getDocs(addressesCollectionRef);
+      const addressesList = addressSnapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
+      setAddresses(addressesList);
+    };
+    fetchAddresses();
+  }, []);
 
   useEffect(() => {
     calculateTotals();
@@ -37,10 +48,6 @@ const Cart = () => {
 
   const handleClearCart = () => dispatch(clearCart());
 
-  const handleLocationChange = (location) => {
-    setCurrentLocation(location);
-    setShowLocationModal(false);
-  };
 
   const calculateTotals = () => {
     totalAmount.current = cartItems.reduce(
@@ -52,7 +59,7 @@ const Cart = () => {
     setGrandTotal(totalAmount.current + calculatedTax + DELIVERY_CHARGE);
   };
 
-  const handleCheckout = () => {
+  const handleCheckout = async () => {
     if (!isRazorpayLoaded) {
       alert("Payment SDK not loaded. Please try again later.");
       return;
@@ -60,13 +67,38 @@ const Cart = () => {
 
     const options = {
       key: "rzp_test_5JTg9I35AkiZMQ", // Replace with your Razorpay key
-      amount:(grandTotal), // Convert to smallest currency unit
+      amount: (grandTotal), // Convert to smallest currency unit
       currency: "INR",
       name: "DifEat Services",
       description: "Order Payment",
       image: "https://example.com/logo.png", // Replace with your logo URL
-      handler: function (response) {
-        alert(`Payment ID: ${response.razorpay_payment_id}`);
+      handler: async function (response) {
+      const orderDate = new Date();
+      
+      const deliveryDate = new Date();
+      deliveryDate.setDate(orderDate.getDate() + 1); // Adjust the number of days as needed
+
+
+        const orderData = {
+          restaurantName: "DifEat Services", // You can use dynamic data here
+          location: currentLocation,
+          orderId: response.razorpay_payment_id,
+          orderDate: orderDate,           
+          deliveryDate: deliveryDate,   
+          items: cartItems.map(item => `${item.name} (x${item.quantity})`).join(", "), // Cart items list
+          totalPrice: grandTotal,
+          imageUrl: "https://picsum.photos/seed/picsum/200/300", // You can replace with actual image URL resturant image
+        };
+
+        try {
+          const ordersCollectionRef = collection(firestore, "difeatusers", auth.currentUser.uid, "orders");
+          await addDoc(ordersCollectionRef, orderData);
+          handleClearCart();
+          alert("Your order has been placed successfully!");
+        } catch (error) {
+          console.error("Error saving order to Firestore: ", error);
+          alert("There was an issue placing your order. Please try again.");
+        }
       },
       prefill: {
         name: "Dinesh kumar", // Use dynamic customer data if available
@@ -82,6 +114,11 @@ const Cart = () => {
     rzp1.open();
   };
 
+  const handleLocationChange = (address) => {
+    setCurrentLocation(`${address.line1},${address.city},${address.zipCode}`);
+    setShowLocationModal(false);
+  };
+
   return (
     <div className="min-h-screen bg-gray-100">
       <div className="max-w-4xl p-4 mx-auto bg-white rounded-md shadow-md sm:p-6 md:p-8">
@@ -95,6 +132,17 @@ const Cart = () => {
             onClick={handleClearCart}
           >
             Clear Cart
+          </button>
+        </div>
+
+        {/* Address Selection */}
+        <div className="mb-4">
+          <label className="block text-gray-700 font-medium mb-1">Delivery Address:</label>
+          <button
+            className="w-full px-4 py-2 text-left border rounded-md text-gray-600 bg-gray-50 hover:bg-gray-100"
+            onClick={() => setShowLocationModal(true)}
+          >
+            {currentLocation}
           </button>
         </div>
 
@@ -142,9 +190,54 @@ const Cart = () => {
             </div>
           </>
         )}
+        {/* Location Modal */}
+        {showLocationModal && (
+          <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
+            <div className="w-11/12 max-w-md p-4 bg-white rounded-md shadow-lg">
+              <h3 className="text-lg font-semibold mb-4">Select Address</h3>
+              <ul className="space-y-3">
+
+                {addresses.map((address, index) => (
+                  <li
+                    key={index}
+                    className="p-2 border rounded-md cursor-pointer hover:bg-gray-100"
+                    onClick={() => handleLocationChange(address)}
+                  >
+
+                    <div>
+                      <div className="flex items-center mb-2">
+                        <IconBasedOnLabel label={address.label} />
+                        <h3 className="font-semibold text-lg ml-2">{address.label}</h3>
+                      </div>
+                      <p>{address.line1}</p>
+                      <p>{address.city}, {address.zipCode}</p>
+                    </div>
+                  </li>
+                ))}
+              </ul>
+              <button
+                className="mt-4 w-full px-4 py-2 bg-red-500 text-white rounded-md hover:bg-red-600"
+                onClick={() => setShowLocationModal(false)}
+              >
+                Close
+              </button>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );
+};
+// Function to render icons based on address label
+const IconBasedOnLabel = ({ label }) => {
+  switch (label) {
+    case "Home":
+      return <FaHome className="text-lg mr-2" />;
+    case "Work":
+      return <FaBriefcase className="text-lg mr-2" />;
+    default:
+      return <FaBuilding className="text-lg mr-2" />;
+  }
 };
 
 export default Cart;
