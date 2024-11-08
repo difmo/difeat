@@ -19,6 +19,7 @@ import CancellationRefundPolicy from "./components/CancellationRefundPolicy";
 
 import userContext from "./utils/userContext";
 import store from "./utils/store";
+import Profile from "./components/Profile";
 
 // Lazy-loaded components
 const Contact = lazy(() => import("./components/Contact"));
