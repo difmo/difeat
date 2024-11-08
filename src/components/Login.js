@@ -109,7 +109,7 @@ const Login = () => {
         createdAt: new Date().toISOString(),
       });
       handleLogin(user);
-      navigate("/");
+      navigate("/profile");
   
     } catch (error) {
       console.error("Error verifying OTP:", error);

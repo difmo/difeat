@@ -9,7 +9,6 @@ import Footer from "./components/Footer";
 import Error from "./components/Error";
 import Shimmer from "./components/Shimmer";
 import RestaurantMenu from "./components/RestaurantMenu";
-import Profile from "./components/Profile";
 import Cart from "./components/Cart";
 import Login from "./components/Login";
 import Food from "./components/Food";
@@ -52,13 +51,7 @@ const appRouter = createBrowserRouter([
           <Suspense fallback={<h1 className="items-center p-4">Loading....</h1>}>
             <About />
           </Suspense>
-        ),
-        children: [
-          {
-            path: "profile",
-            element: <Profile />,
-          },
-        ],
+        )
       },
       {
         path: "/contact",
@@ -103,6 +96,10 @@ const appRouter = createBrowserRouter([
       {
         path: "/login",
         element: <Login />,
+      },
+      {
+        path: "/profile",
+        element: <Profile />,
       },
     ],
   },
