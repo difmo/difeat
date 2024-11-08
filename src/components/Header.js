@@ -36,7 +36,7 @@ const Header = () => {
   }, []);
 
   useEffect(() => {
-    // Listen for auth changes and update token and login state
+ //Listen for auth changes and update token and login state
     const unsubscribe = onAuthStateChanged(auth, (user) => {
       if (user) {
         // User is signed in, set token in localStorage if not already present
@@ -51,7 +51,6 @@ const Header = () => {
         console.log("User logged out");
       }
     });
-
     return () => unsubscribe();
   }, []);
 
