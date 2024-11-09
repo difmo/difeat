@@ -8,7 +8,7 @@ import {
   RecaptchaVerifier,
   PhoneAuthProvider,
   signInWithCredential,
-  doc, setDoc,firestore
+  doc, setDoc, firestore,getDoc
 } from "../../firebase";
 import { useContext } from "react";
 import userContext from "../utils/userContext";
@@ -65,15 +65,6 @@ const Login = () => {
                 "OTP sent successfully with Verification ID:",
                 confirmationResult.verificationId
               );
-
-              // // Check for verificationId
-              // if (confirmationResult && confirmationResult.verificationId) {
-              //   setVerificationId(confirmationResult.verificationId);
-              //   setOtpSent(true);
-              //   console.log("OTP sent successfully with Verification ID:", confirmationResult.verificationId);
-              // } else {
-              //   console.error("Verification ID is missing or undefined.");
-              // }
             })
             .catch((error) => {
               console.error("Error sending OTP:", error.message);
@@ -102,54 +93,78 @@ const Login = () => {
       const userCredential = await signInWithCredential(auth, credential);
       const user = userCredential.user;
       console.log("OTP verified successfully. User:", user);
-      const userDocRef = doc(firestore, "difeatusers", user.uid);
-      await setDoc(userDocRef, {
-        uid: user.uid,
-        phoneNumber: user.phoneNumber,
-        createdAt: new Date().toISOString(),
-      });
-      handleLogin(user);
-      navigate("/profile");
   
+      // Check if the user document already exists
+      const userDocRef = doc(firestore, "difeatusers", user.uid);
+      const userDoc = await getDoc(userDocRef);
+  
+      if (!userDoc.exists()) {
+        // User doesn't exist, create the user document
+        const userData = {
+          profile: {
+            uid: user.uid,
+            phoneNumber: user.phoneNumber,
+            createdAt: new Date().toISOString(),
+            name: user.displayName || "Guest",
+            email: user.email || "guest@example.com",
+            profileImageUrl: user.photoURL || "https://example.com/default-profile.jpg",
+          },
+          roles: {
+            isUser: true,
+            isStoreKeeper: false
+          },
+          primaryAddress: null,
+          settings: {
+            notificationsEnabled: true,
+            darkMode: false,
+          },
+        };
+        await setDoc(userDocRef, userData);
+        console.log("New user created:", user.uid);
+      } else {
+        console.log("User already exists in Firestore:", user.uid);
+      }
+  
+      handleLogin(user);
+      navigate("/");
     } catch (error) {
       console.error("Error verifying OTP:", error);
       alert(`Error verifying OTP: ${error.message || error}`);
     }
   };
+  
 
+  const handleLogin = (user) => {
+    if (user) {
+      console.log("User object received:", user); 
+      const userData = {
+        uid: user.uid,
+        name: user.displayName || "Guest",
+        email: user.email || "guest@example.com",
+        isStoreKeeper: false,  
+        isUser: true,         
+        phoneNumber: user.phoneNumber,
+        profileImageUrl: user.photoURL || "https://example.com/default-profile.jpg",
+      };
 
-const handleLogin = (user) => {
-  if (user) {
-    console.log("User object received:", user); // Log the user object
+      console.log("Formatted user data:", userData);
 
-    const userData = {
-      uid: user.uid,
-      phoneNumber: user.phoneNumber,
-      displayName: user.displayName,
-      email: user.email,
-    };
+      setUser(userData);
+      console.log("User state updated"); 
+      user.getIdToken().then((token) => {
+        console.log("Access token retrieved:", token); 
 
-    console.log("Formatted user data:", userData); // Log formatted user data
+        localStorage.setItem("token", token);
+        localStorage.setItem("isLoggedIn", "true");
+        console.log("Token and login state saved to localStorage"); 
 
-    // Set user data in local state
-    setUser(userData);
-    console.log("User state updated"); // Confirm user state update
-
-    // Get the access token and store it in localStorage
-    user.getIdToken().then((token) => {
-      console.log("Access token retrieved:", token); // Log the access token
-
-      localStorage.setItem("token", token);
-      localStorage.setItem("isLoggedIn", "true");
-      console.log("Token and login state saved to localStorage"); // Confirm storage
-
-    }).catch((error) => {
-      console.error("Error retrieving access token:", error); // Log any errors
-    });
-  } else {
-    console.log("No user data found"); // Log if no user data is present
-  }
-};
+      }).catch((error) => {
+        console.error("Error retrieving access token:", error); 
+      });
+    } else {
+      console.log("No user data found"); 
+    }
+  };
 
   return (
     <div className="flex items-center justify-center min-h-screen px-4 bg-gradient-to-br from-orange-100">

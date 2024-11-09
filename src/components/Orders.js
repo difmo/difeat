@@ -12,7 +12,7 @@ const Orders = () => {
         };
         fetchOrders();
     }, []);
-
+                 
     return (
         <div className="p-6">
             <h2 className="text-2xl font-bold mb-6">Past Orders</h2>
@@ -29,7 +29,7 @@ const Orders = () => {
                           <p className="text-xs text-gray-400">ORDER #{order.orderId} | {new Date(order.orderDate).toLocaleString()}</p>
                         </div>
                         <div className="text-right">
-                          <p className="text-sm text-gray-400">Delivered on {new Date(order.deliveryDate.toLocaleDateString()).toLocaleString()}</p>
+                          {/* <p className="text-sm text-gray-400">Delivered on {order&&order.deliveryDate!=null?new Date(order.deliveryDate).toLocaleString():""}</p> */}
                           <span className="text-green-500 text-xl">✔️</span>
                         </div>
                       </div>
@@ -48,9 +48,6 @@ const Orders = () => {
                       </div>
                     </div>
                   </div>
-                  
-
-
                 ))
             ) : (
                 <p className="text-center text-gray-500">No past orders available</p>

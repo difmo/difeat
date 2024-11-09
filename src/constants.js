@@ -3,7 +3,6 @@
 import { useEffect, useState } from "react";
 
 const constants = () => {
-    
 const [geolocation, setGeolocation] = useState({
     lat: 12.971599, 
     lng: 77.594566,

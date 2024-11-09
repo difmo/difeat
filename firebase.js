@@ -1,6 +1,6 @@
 import { initializeApp } from "firebase/app";
 import { getAuth, PhoneAuthProvider, RecaptchaVerifier ,signInWithCredential,signOut,onAuthStateChanged} from "firebase/auth";
-import { getFirestore, doc, setDoc , getDoc, collection, getDocs, updateDoc, addDoc, deleteDoc} from "firebase/firestore";
+import { getFirestore, doc, setDoc , getDoc, collection, getDocs, updateDoc, addDoc, deleteDoc,Timestamp} from "firebase/firestore";
 import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
 // Your web app's Firebase configuration
 const firebaseConfig = {
@@ -20,4 +20,4 @@ const auth = getAuth(app);
 const firestore = getFirestore(app);
 const storage = getStorage(app);
 
-export { auth, signOut, PhoneAuthProvider, RecaptchaVerifier, signInWithCredential, setDoc, firestore, onAuthStateChanged, doc, getDoc, collection, getDocs, updateDoc, addDoc, deleteDoc, storage, ref, uploadBytes, getDownloadURL };
+export { auth, signOut, PhoneAuthProvider, RecaptchaVerifier, signInWithCredential, setDoc, firestore, onAuthStateChanged, doc, getDoc, collection, getDocs, updateDoc, addDoc, deleteDoc, storage, ref, uploadBytes, getDownloadURL,Timestamp };

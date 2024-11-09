@@ -101,7 +101,7 @@ const Cart = () => {
         }
       },
       prefill: {
-        name: "Dinesh kumar", // Use dynamic customer data if available
+        name: "Dinesh kumar", 
         email: "dinesh@gmail.com",
         contact: "8853389395",
       },
@@ -117,8 +117,26 @@ const Cart = () => {
   const handleLocationChange = (address) => {
     setCurrentLocation(`${address.line1},${address.city},${address.zipCode}`);
     setShowLocationModal(false);
+    setPrimaryAddress(auth.currentUser.uid,address);
   };
 
+
+const setPrimaryAddress = async (userId, selectedAddress) => {
+  const userDocRef = doc(firestore, "difeatusers", userId);
+  try {
+    await updateDoc(userDocRef, {
+      primaryAddress: {
+        line1: selectedAddress.line1,
+        city: selectedAddress.city,
+        zipCode: selectedAddress.zipCode,
+        label: selectedAddress.label,  // e.g., Home, Work
+      },
+    });
+    console.log("Primary address updated successfully.");
+  } catch (error) {
+    console.error("Error updating primary address: ", error);
+  }
+};
   return (
     <div className="min-h-screen bg-gray-100">
       <div className="max-w-4xl p-4 mx-auto bg-white rounded-md shadow-md sm:p-6 md:p-8">
