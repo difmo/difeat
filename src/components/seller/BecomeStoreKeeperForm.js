@@ -17,8 +17,9 @@ import {
 import userContext from "../../utils/userContext";
 
 const BecomeStoreKeeperForm = ({ userId }) => {
+
   const { setUser } = useContext(userContext);
-  const navigate = useNavigate();  // Initialize navigate
+  const navigate = useNavigate(); 
   const [formData, setFormData] = useState({
     shopName: "",
     shopDescription: "",
@@ -32,7 +33,7 @@ const BecomeStoreKeeperForm = ({ userId }) => {
     accountNumber: "",
     bankName: "",
     ifscCode: "",
-    shopLogo: null, // For storing file input
+    shopLogo: null,
   });
 
   const [error, setError] = useState(null);

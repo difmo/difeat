@@ -65,14 +65,14 @@ const Header = () => {
         setIsLoggedin(true);
         console.log("User logged in");
       } else {
-        navigate("/login");
+        navigate("/");
         localStorage.removeItem("token");
         setIsLoggedin(false);
         console.log("User logged out");
       }
     });
     return () => unsubscribe();
-  }, [navigate]);
+  }, []);
 
 
 

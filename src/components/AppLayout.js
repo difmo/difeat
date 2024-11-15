@@ -4,7 +4,6 @@ import { Outlet } from "react-router-dom";
 import userContext from "../utils/userContext";
 import Header from "./Header";
 import Footer from "./Footer";
-import Dashboard from "./Dashboard";
 import { useSelector } from "react-redux";
 
 const AppLayout = ({ children }) => {

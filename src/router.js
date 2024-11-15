@@ -22,7 +22,7 @@ import Contact from "./components/Contact";
 
 import EditStore from "./components/seller/EditStore";
 import SellerLayout from "./components/SellerLayout";
-import SellerProfile from "./components/seller/SellerProfile";
+import Dashboard from "./components/seller/Dashboard";
 
 
 // Router Configuration
@@ -137,7 +137,7 @@ const sellerRouter = createBrowserRouter([
       },
       {
         path: "/",
-        element: <SellerProfile />,
+        element: <Dashboard />,
       },
     ],
   },

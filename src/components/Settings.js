@@ -9,6 +9,7 @@ const Settings = () => {
   const [storeData, setStoreData] = useState(null);
   const [isStoreKeeper, setIsStoreKeeper] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [isStoreForm, setStoreForm] = useState(false);
   const navigate = useNavigate(); // Initialize navigate
 
   useEffect(() => {
@@ -51,86 +52,21 @@ const Settings = () => {
 
 
 
-  const handleDeleteStore = async () => {
-    if (storeData) {
-      try {
-        const storeDocRef = doc(firestore, "stores", storeData.id);
-        await deleteDoc(storeDocRef);
-        console.log("Store deleted successfully!");
-        setStoreData(null); // Reset store data
-      } catch (error) {
-        console.error("Error deleting store:", error);
-      }
-    }
-  };
 
 
- 
-
-  const handleEditStore = () => {
-    if (storeData && storeData.storeId) {
-      // Redirect to the edit store page with the store ID
-      // For example, using `useNavigate` if using React Router v6+
-      navigate(`/edit-store/${storeData.storeId}`);
-    } else {
-      console.error("Store ID is undefined or missing");
-    }
-  };
-  
   if (loading) {
     return <p>Loading...</p>;
   }
 
   return (
     <div className="mt-6 bg-white p-4 rounded-lg shadow-md">
-      <h3 className="font-semibold mb-2">Become a StoreKeeper</h3>
-      {isStoreKeeper ? (
-        storeData ? (
-          <div>
-            <h4>Store Details</h4>
-            {storeData.shopLogo && (
-              <div className="mb-4">
-                <img
-                  src={storeData.shopLogo}
-                  alt={`${storeData.shopName} Logo`}
-                  className="w-32 h-32 object-cover rounded-md"
-                />
-              </div>
-            )}
-            <div>
-              <p><strong>Shop Name:</strong> {storeData.shopName}</p>
-              <p><strong>Description:</strong> {storeData.shopDescription}</p>
-              <p><strong>Address:</strong> {storeData.address.line1}, {storeData.address.city}, {storeData.address.zipCode}</p>
-
-              {/* Shop Status */}
-              <p>
-                <strong>Status: </strong>
-                {storeData.isVerified ? (
-                  <span className="text-green-600">Verified</span>
-                ) : (
-                  <span className="text-red-600">Not Verified</span>
-                )}
-              </p>
-
-              {/* Add more store fields as needed */}
-            </div>
-
-            <button onClick={handleEditStore} className="bg-blue-600 text-white py-2 px-4 rounded-md">
-              Edit Store
-            </button>
-
-            <button onClick={handleDeleteStore} className="bg-red-600 text-white py-2 px-4 rounded-md ml-2">
-              Delete Store
-            </button>
-          </div>
-        ) : (
-          <p>No store found. You can create one by filling out the form below.</p>
-        )
-      ) : (
-        <p>You are not a storekeeper. Please become one by filling out the form below.</p>
-      )}
-
-      <BecomeStoreKeeperForm userId={userId} />
+      <h3 className="font-semibold mb-2">Store Details</h3>
+      <button onClick={() => {
+        setStoreForm(!isStoreForm);
+      }} className="bg-red-600 text-white py-2 px-4 rounded-md ml-2">
+        Become a seller
+      </button>
+      {isStoreForm ? <BecomeStoreKeeperForm userId={userId}/> : <h1></h1>}
     </div>
   );
 };

@@ -3,10 +3,11 @@ import SellerHeader from "./SellerHeader";
 import { Outlet } from "react-router-dom";
 import SellerFooter from "./SellerFooter";
 
-const SellerLayout = () => (
+const SellerLayout = ({children}) => (
   <div>
     <SellerHeader />
-    <main><Outlet /></main>
+    {children}
+    <Outlet />
     <SellerFooter />
   </div>
 );
