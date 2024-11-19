@@ -15,7 +15,11 @@ const Cart = () => {
   const [showLocationModal, setShowLocationModal] = useState(false);
 
   const cartItems = useSelector((store) => store.cart.items);
+
+  const storeId = useSelector((store) => store.cart.items[0]?.storeId);
   const dispatch = useDispatch();
+
+  console.log('sdfjj',storeId);
 
 
   const totalAmount = useRef(0);
@@ -79,7 +83,7 @@ const Cart = () => {
       deliveryDate.setDate(orderDate.getDate() + 1); 
         const orderData = {
           userId: auth.currentUser.uid,
-          storeId: "1",
+          storeId: storeId,
           products:cartItems,
           totalPrice: grandTotal,
           status:"pending",

@@ -1,9 +1,8 @@
-import { IMG_CDN_URL } from "../constants";
 import { useDispatch } from "react-redux";
 import { removeItem, decrQuantity, incrQuantity } from "../utils/cartSlice";
 
 const FoodItemCart = ({ item }) => {
-  const { name, description, category, imageId, price, defaultPrice, quantity } = item;
+  const { name, description, category, productImageUrl, price, defaultPrice, quantity } = item;
   const dispatch = useDispatch();
 
   const truncateDescription = (text, maxLength = 26) =>
@@ -17,7 +16,7 @@ const FoodItemCart = ({ item }) => {
     <div className="flex items-center gap-3 p-3 bg-white rounded-md shadow-sm hover:shadow-md">
       <img
         className="object-cover w-16 h-16 rounded-md sm:w-20 sm:h-20"
-        src={IMG_CDN_URL + imageId}
+        src={productImageUrl}
         alt={name}
       />
 

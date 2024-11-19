@@ -22,7 +22,7 @@ const RestrauntCard = (props) => {
           <div className="w-[4px] h-[4px] rounded-full bg-black"></div>
           <span className="">{deliveryTime} MINS AWAY</span>
           <div className="w-[4px] h-[4px] rounded-full bg-black"></div>
-          <span className="">{costForTwo.toUpperCase()}</span>
+          <span className="">{costForTwo}</span>
         </div>
       
     </div>

@@ -73,12 +73,12 @@ const Dashboard = () => {
       if (user) {
         fetchUserData(user.uid);
       } else {
-        navigate("/login"); 
+        // navigate("/login"); 
       }
     });
 
     return () => unsubscribe(); 
-  }, [navigate]);
+  }, []);
 
   // if (isLoading) return <p>Loading...</p>;
 

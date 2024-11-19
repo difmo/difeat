@@ -8,7 +8,7 @@ import useStore from "../utils/useStore";
 
 const RestaurantMenu = () => {
   const { resId } = useParams();
-  const { store, isLoading, error } = useStore(resId);
+  const { store, products,isLoading, error } = useStore(resId);
   const [showIndex, setShowIndex] = useState(0);
 
   console.log("hiiii",store);
@@ -117,18 +117,9 @@ const RestaurantMenu = () => {
       </div>
 
     
-      {categories?.map((category, index) => (
-        // controlled component
-        <RestaurantCategory
-          key={category?.card?.card?.title}
-          data={category?.card?.card}
-          showItems={index === showIndex ? true : false}
-          setShowIndex={() => {
-            if (index === showIndex) setShowIndex(null);
-            else setShowIndex(index);
-          }}
-        />
-      ))}
+      <RestaurantCategory
+          data={products}
+          storeId={store.storeId}/>
     </div>
   );
 };
