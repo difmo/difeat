@@ -111,7 +111,7 @@ const RestaurantMenu = () => {
             ></path>
           </svg>
           <span className="">
-            {store?.costForTwo}
+            {/* {store?.costForTwo} */}
           </span>
         </div>
       </div>

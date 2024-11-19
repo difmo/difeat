@@ -1,30 +1,27 @@
 import React, { useEffect, useState } from "react";
 import { collection, getDocs, query, where } from "firebase/firestore";
-import { firestore, auth } from "../../firebase";
-import OrderCard from "./OrderCard";
+import { firestore, auth } from "../../../firebase";
+import OrderCard from "../OrderCard";
+import SellerOrderCard from "./SellerOrderCard";
 
-const Orders = () => {
+const SellerOrders = (storeId,userId) => {
   const [orders, setOrders] = useState([]);
-
   const [loading, setLoading] = useState(true);
-
+console.log("storeIdss  ",storeId.storeId);
   useEffect(() => {
     const fetchOrders = async () => {
       setLoading(true);
       try {
-        // Reference to the 'orders' collection
         const ordersCollectionRef = collection(firestore, "orders");
         
-        // Query to fetch orders where userId matches the current user's UID
         const ordersQuery = query(
           ordersCollectionRef,
-          where("userId", "==", auth.currentUser.uid)
+          where("storeId", "==", storeId.storeId)
         );
         
-        // Fetch data from Firestore
         const ordersSnapshot = await getDocs(ordersQuery);
         const ordersList = ordersSnapshot.docs.map((doc) => (doc.data()));
-
+        console.log("ordersList",ordersList)
         setOrders(ordersList);
       } catch (error) {
         console.error("Error fetching orders:", error);
@@ -32,7 +29,6 @@ const Orders = () => {
         setLoading(false);
       }
     };
-
     fetchOrders();
   }, []);
 
@@ -43,7 +39,7 @@ const Orders = () => {
         <p className="text-center text-gray-500">Loading orders...</p>
       ) : orders.length > 0 ? (
         orders.map((order) => (
-        <OrderCard 
+        <SellerOrderCard 
         key={order.orderId}
         order={order}/>
         ))
@@ -54,4 +50,4 @@ const Orders = () => {
   );
 };
 
-export default Orders;
+export default SellerOrders;

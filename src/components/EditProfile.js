@@ -20,7 +20,7 @@ import Orders from "./Orders";
 import Addresses from "./Addresses";
 import Settings from "./Settings";
 
-const Profile = () => {
+const EditProfile = () => {
   const [userDetails, setUserDetails] = useState(null);
   const [orders, setOrders] = useState([]);
   const [addresses, setAddresses] = useState([]);
@@ -164,4 +164,4 @@ const Profile = () => {
   );
 };
 
-export default Profile;
+export default EditProfile;

@@ -14,6 +14,7 @@ import Store from "./Store";
 import Home from "./Home";
 import Products from "./Products";
 import SellerSttings from "./SellerSettings";
+import SellerOrders from "./SellerOrders";
 const Dashboard = () => {
   const [userDetails, setUserDetails] = useState(null);
   const [orders, setOrders] = useState([]);
@@ -37,6 +38,7 @@ const Dashboard = () => {
           setEditFormData({ displayName: userData.displayName, email: userData.email });
           setProfileImageUrl(userData.profileImageUrl || ""); // Set image URL if available
         }
+        
   
         const ordersCollectionRef = collection(firestore, "difeatusers", userUid, "orders");
         const ordersSnapshot = await getDocs(ordersCollectionRef);
@@ -142,8 +144,8 @@ const Dashboard = () => {
         {isEditingProfile &&( <EditProfile />)}
         {activeTab === "Home" && <Home />}
         {activeTab === "Store" && <Store />}
-        {activeTab === "Profile" && <Orders />}
-        {activeTab === "Orders" && <Orders />}
+        {/* {activeTab === "Profile" && <SellerOrders storeId={storeData.storeId} userId={storeData.userId} />} */}
+        {activeTab === "Orders" && <SellerOrders storeId={storeData.storeId} userId={storeData.userId}/>}
         {activeTab === "Products" && <Products storeId={storeData.storeId} userId={storeData.userId}/>}
         {activeTab === "SellerSttings" && <SellerSttings storeId={storeData.storeId} />}
       </div>

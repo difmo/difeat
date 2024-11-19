@@ -122,7 +122,7 @@ const Profile = () => {
 
       <div className="flex-1 p-8">
         {activeTab === "EditProfile" && (<EditProfile userDetails={userDetails} setUserDetails={setUserDetails} profileImageUrl={profileImageUrl} setProfileImageUrl={setProfileImageUrl} />)}
-        {/* {activeTab === "Orders" && <Orders orders={orders} />} */}
+        {activeTab === "Orders" && <Orders orders={orders} />}
         {activeTab === "Addresses" && <Addresses addresses={addresses} />}
         {activeTab === "Settings" && <Settings />}
       </div>
