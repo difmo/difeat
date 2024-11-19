@@ -1,37 +1,34 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { IMG_CDN_URL } from "../constants";
-import useRestaurant from "../utils/useRestaurant";
 import Shimmer from "./Shimmer";
 import { ShimmerMenu } from "./Shimmer";
 import RestaurantCategory from "./RestaurantCategory";
+import useStore from "../utils/useStore";
 
 const RestaurantMenu = () => {
   const { resId } = useParams();
-  const restaurant = useRestaurant(resId);
+  const { store, isLoading, error } = useStore(resId);
   const [showIndex, setShowIndex] = useState(0);
 
-  console.log(restaurant,"hiiii");
-  const itemCards =
-    restaurant?.cards[2]?.groupedCard?.cardGroupMap?.REGULAR?.cards[1]?.card
-      ?.card;
+  console.log("hiiii",store);
 
-  // console.log(itemCards,"1")
-  // console.log(restaurant?.cards[2]?.groupedCard?.cardGroupMap?.REGULAR?.cards[1]?.card?.card)
-  // 2- desktop , 3-mobile view api call to get data
-  const i = window.innerWidth > 480 ? 2 : 3;
+  if (isLoading) {
+    return <div>Loading store data...</div>;
+  }
 
-  const categories = restaurant?.cards[
-    4
-  ]?.groupedCard?.cardGroupMap?.REGULAR?.cards.filter(
-    (c) =>
-      c.card?.["card"]?.["@type"] ===
-      "type.googleapis.com/swiggy.presentation.food.v2.ItemCategory"
-  );
-  // console.log(restaurant,"1");
-   console.log(categories, "hehehe");
+  if (error) {
+    return <div>Error loading store: {error.message}</div>;
+  }
 
-  if (!restaurant) return <ShimmerMenu />;
+  if (!store) {
+    return <div>No store found for the provided ID: {resId}</div>;
+  }
+
+
+
+  if (!store) return <ShimmerMenu />;
+
 
   return (
     <div className="flex flex-col w-[100%] md:w-2/3  border m-auto w-full">
@@ -39,31 +36,30 @@ const RestaurantMenu = () => {
         <div className="flex flex-col text-xs text-[#e5e6ec] font-medium gap-1">
           {/* <h1>Restraunt id: {resId}</h1> */}
           <span className="text-xl font-bold text-white">
-            {restaurant?.cards[2]?.card?.card?.info?.name}
+            {store?.storeName}
           </span>
           <span className="">
-            {restaurant?.cards[2]?.card?.card?.info?.cuisines.join(", ")}
+            {store?.types}
           </span>
           <span className="">
-            {restaurant?.cards[2]?.card?.card?.info?.areaName},{" "}
-            {restaurant?.cards[2]?.card?.card?.info?.city}{" "}
+            {/* {restaurant?.cards[2]?.card?.card?.info?.areaName},{" "}
+            {restaurant?.cards[2]?.card?.card?.info?.city}{" "} */}
             <span className="text-orange-600 font-bold">𖡡</span>
           </span>
           <span className="flex">
             <span className="flex items-center gap-1 px-1 mr-2 rounded-sm text-white bg-green-600  font-semibold">
               <span className="text-[0.7rem]">
-                {restaurant?.cards[2]?.card?.card?.info?.avgRating}{" "}
+                {store?.avgRating}{" "}
               </span>
               <span className="text-white text-[0.8rem]">★ </span>
             </span>
-            | {restaurant?.cards[2]?.card?.card?.info?.totalRatingsString}
+            | {store?.totalRatingsString}
           </span>
         </div>
         <img
           className="w-56 h-36 rounded"
           src={
-            IMG_CDN_URL +
-            restaurant?.cards[2]?.card?.card?.info?.cloudinaryImageId
+            store?.storeImageUrl
           }
         />
       </div>
@@ -90,7 +86,7 @@ const RestaurantMenu = () => {
             ></path>
           </svg>
           <span className="">
-            {restaurant?.cards[2]?.card?.card?.info?.sla?.slaString || " 30-40 MINS "}..
+            {store?.deliveryTime || " 30-40 MINS "}..
           </span>
         </div>
         <div className="flex items-center gap-2 font-semibold">
@@ -115,16 +111,15 @@ const RestaurantMenu = () => {
             ></path>
           </svg>
           <span className="">
-            {restaurant?.cards[2]?.card?.card?.info?.costForTwoMessage}
+            {store?.costForTwo}
           </span>
         </div>
       </div>
 
-      {/* categories accordian */}
+    
       {categories?.map((category, index) => (
         // controlled component
         <RestaurantCategory
-        
           key={category?.card?.card?.title}
           data={category?.card?.card}
           showItems={index === showIndex ? true : false}

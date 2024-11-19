@@ -1,8 +1,20 @@
 import React, { useEffect, useState } from "react";
 import {
-  auth, onAuthStateChanged, firestore, storage, signOut, doc, getDoc, collection, getDocs, updateDoc, ref, uploadBytes, getDownloadURL
+  auth,
+  onAuthStateChanged,
+  firestore,
+  storage,
+  signOut,
+  doc,
+  getDoc,
+  collection,
+  getDocs,
+  updateDoc,
+  ref,
+  uploadBytes,
+  getDownloadURL,
 } from "../../firebase";
-import { FaCamera, FaSignOutAlt } from "react-icons/fa";
+import { FaCamera } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 import Orders from "./Orders";
 import Addresses from "./Addresses";
@@ -14,7 +26,6 @@ const Profile = () => {
   const [addresses, setAddresses] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isEditingProfile, setIsEditingProfile] = useState(false);
-  const [editFormData, setEditFormData] = useState({ displayName: "", email: "" });
   const [profileImage, setProfileImage] = useState(null);
   const [profileImageUrl, setProfileImageUrl] = useState("");
   const navigate = useNavigate();
@@ -27,8 +38,8 @@ const Profile = () => {
         if (userDoc.exists()) {
           const userData = userDoc.data();
           setUserDetails(userData);
-          setEditFormData({ displayName: userData.displayName, email: userData.email });
-          setProfileImageUrl(userData.profileImageUrl || ""); // Set image URL if available
+          const profileData = userData.profile || {};
+          setProfileImageUrl(profileData.profileImageUrl || "");
         }
 
         const ordersCollectionRef = collection(firestore, "difeatusers", userUid, "orders");
@@ -68,8 +79,20 @@ const Profile = () => {
       }
 
       const userDocRef = doc(firestore, "difeatusers", auth.currentUser.uid);
-      await updateDoc(userDocRef, { ...editFormData, profileImageUrl: imageUrl });
-      setUserDetails({ ...userDetails, ...editFormData, profileImageUrl: imageUrl });
+      const updatedProfile = {
+        ...userDetails.profile,
+        name: userDetails.profile.name || "Guest",
+        email: userDetails.profile.email || "",
+        profileImageUrl: imageUrl,
+      };
+
+      await updateDoc(userDocRef, { profile: updatedProfile });
+
+      setUserDetails((prevState) => ({
+        ...prevState,
+        profile: updatedProfile,
+      }));
+
       setIsEditingProfile(false);
       alert("Profile updated successfully.");
     } catch (error) {
@@ -112,35 +135,30 @@ const Profile = () => {
         <input
           type="text"
           className="border border-gray-300 p-2 rounded mt-4 w-full"
-          value={editFormData.displayName}
-          onChange={(e) => setEditFormData({ ...editFormData, displayName: e.target.value })}
-          placeholder="Display Name"
+          value={userDetails?.profile?.name || ""}
+          onChange={(e) =>
+            setUserDetails((prevState) => ({
+              ...prevState,
+              profile: { ...prevState.profile, name: e.target.value },
+            }))
+          }
+          placeholder="Name"
         />
         <input
           type="email"
           className="border border-gray-300 p-2 rounded mt-2 w-full"
-          value={editFormData.email}
-          onChange={(e) => setEditFormData({ ...editFormData, email: e.target.value })}
+          value={userDetails?.profile?.email || ""}
+          onChange={(e) =>
+            setUserDetails((prevState) => ({
+              ...prevState,
+              profile: { ...prevState.profile, email: e.target.value },
+            }))
+          }
           placeholder="Email"
         />
         <button onClick={handleEditProfile} className="mt-4 bg-blue-500 text-white px-4 py-2 rounded w-full">
           Save
         </button>
-      </div>
-
-      <div className="flex flex-col space-y-4 w-full md:w-2/3">
-        <div className="bg-white rounded-lg shadow-md p-6">
-          <h2 className="text-xl font-semibold mb-4">Orders</h2>
-          <Orders orders={orders} />
-        </div>
-        <div className="bg-white rounded-lg shadow-md p-6">
-          <h2 className="text-xl font-semibold mb-4">Addresses</h2>
-          <Addresses addresses={addresses} />
-        </div>
-        <div className="bg-white rounded-lg shadow-md p-6">
-          <h2 className="text-xl font-semibold mb-4">Settings</h2>
-          <Settings />
-        </div>
       </div>
     </div>
   );

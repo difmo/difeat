@@ -8,10 +8,11 @@ import {
   RecaptchaVerifier,
   PhoneAuthProvider,
   signInWithCredential,
-  doc, setDoc, firestore,getDoc
+  doc, setDoc, firestore, getDoc
 } from "../../firebase";
 import { useContext } from "react";
 import userContext from "../utils/userContext";
+import Loader from "react-loader-spinner";
 
 const phoneSchema = Yup.object().shape({
   phone: Yup.string()
@@ -25,12 +26,13 @@ const phoneSchema = Yup.object().shape({
 const Login = () => {
   const [otpSent, setOtpSent] = useState(false);
   const [verificationId, setVerificationId] = useState(null);
+  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
   const { setUser } = useContext(userContext);
 
-  const handlePhoneSubmit = (values) => {
+  const handlePhoneSubmit = async (values) => {
+    setLoading(true);
     console.log("Sending OTP to:", values.phone);
-
     try {
       // Initialize RecaptchaVerifier
       const recaptchaVerifier = new RecaptchaVerifier(
@@ -43,6 +45,7 @@ const Login = () => {
           },
         }
       );
+
 
       // Ensure recaptcha renders correctly
       recaptchaVerifier
@@ -61,6 +64,7 @@ const Login = () => {
               console.log("Confirmation result object:", confirmationResult);
               setVerificationId(confirmationResult);
               setOtpSent(true);
+              setLoading(false);
               console.log(
                 "OTP sent successfully with Verification ID:",
                 confirmationResult.verificationId
@@ -69,12 +73,15 @@ const Login = () => {
             .catch((error) => {
               console.error("Error sending OTP:", error.message);
               alert(`Error: ${error.message}`);
+              setLoading(false);
             });
         })
         .catch((error) => {
+          setLoading(false);
           console.error("Error rendering reCAPTCHA:", error.message);
         });
     } catch (error) {
+      setLoading(false);
       console.error("Error in phone number verification:", error.message);
     }
   };
@@ -88,6 +95,7 @@ const Login = () => {
       return;
     }
   
+    setLoading(true);  // Start loading
     try {
       const credential = PhoneAuthProvider.credential(verificationId, values.otp);
       const userCredential = await signInWithCredential(auth, credential);
@@ -119,53 +127,56 @@ const Login = () => {
             darkMode: false,
           },
         };
+  
+        // Create user document
         await setDoc(userDocRef, userData);
         console.log("New user created:", user.uid);
+  
+        setLoading(false);  // Stop loading
+        handleLogin(userData, user);  // Pass both userData and user object to handleLogin
       } else {
+        // User exists, fetch the existing user data
+        const userData = userDoc.data();
         console.log("User already exists in Firestore:", user.uid);
+  
+        setLoading(false);  // Stop loading
+        handleLogin(userData, user);  // Pass existing userData and user object to handleLogin
       }
   
-      handleLogin(user);
-      navigate("/");
     } catch (error) {
+      setLoading(false);  // Stop loading
       console.error("Error verifying OTP:", error);
       alert(`Error verifying OTP: ${error.message || error}`);
     }
   };
   
-
-  const handleLogin = (user) => {
-    if (user) {
-      console.log("User object received:", user); 
-      const userData = {
-        uid: user.uid,
-        name: user.displayName || "Guest",
-        email: user.email || "guest@example.com",
-        isStoreKeeper: false,  
-        isUser: true,         
-        phoneNumber: user.phoneNumber,
-        profileImageUrl: user.photoURL || "https://example.com/default-profile.jpg",
-      };
-
-      console.log("Formatted user data:", userData);
-
+  const handleLogin = (userData, user) => {
+    if (userData) {
       setUser(userData);
-      console.log("User state updated"); 
+      console.log("Formatted user data:", userData);
+      if (userData.roles.isStoreKeeper) {
+        // navigate("/store-dashboard");  
+        navigate("/");
+      } else {
+        // navigate("/user-dashboard");
+        navigate("/");
+      }
       user.getIdToken().then((token) => {
-        console.log("Access token retrieved:", token); 
-
+        console.log("Access token retrieved:", token);
         localStorage.setItem("token", token);
         localStorage.setItem("isLoggedIn", "true");
-        console.log("Token and login state saved to localStorage"); 
-
+        console.log("Token and login state saved to localStorage");
+        setLoading(false);
       }).catch((error) => {
-        console.error("Error retrieving access token:", error); 
+        setLoading(false);
+        console.error("Error retrieving access token:", error);
       });
     } else {
-      console.log("No user data found"); 
+      setLoading(false);
+      console.log("No user data found");
     }
   };
-
+  
   return (
     <div className="flex items-center justify-center min-h-screen px-4 bg-gradient-to-br from-orange-100">
       <div className="w-full max-w-lg p-8 my-5 bg-white shadow-lg rounded-2xl lg:max-w-md sm:max-w-sm">
@@ -230,7 +241,8 @@ const Login = () => {
                     type="submit"
                     className="w-full py-3 text-lg font-bold text-white bg-[#fb0b0f] hover:bg-orange-600 sm:text-base"
                   >
-                    CONTINUE
+                    {loading ? "Please wait ..." : "CONTINUE"}
+
                   </button>
                 </>
               ) : (
@@ -250,13 +262,12 @@ const Login = () => {
                       <p className="mt-1 text-sm text-red-500">{errors.otp}</p>
                     )}
                   </div>
-
                   {/* Verify OTP Button */}
                   <button
                     type="submit"
                     className="w-full py-3 text-lg text-white bg-[#fb0b0f] rounded-lg hover:bg-orange-600 sm:text-base"
                   >
-                    Verify OTP
+                    {loading ? "Please wait..." : "Verify OTP"}
                   </button>
 
                   {/* Resend OTP / Change Number */}

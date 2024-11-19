@@ -21,7 +21,7 @@ const BecomeStoreKeeperForm = ({ userId }) => {
   const { setUser } = useContext(userContext);
   const navigate = useNavigate(); 
   const [formData, setFormData] = useState({
-    shopName: "",
+    storeName: "",
     shopDescription: "",
     addressLine1: "",
     city: "",
@@ -33,7 +33,7 @@ const BecomeStoreKeeperForm = ({ userId }) => {
     accountNumber: "",
     bankName: "",
     ifscCode: "",
-    shopLogo: null,
+    storeImageUrl: null,
   });
 
   const [error, setError] = useState(null);
@@ -47,7 +47,7 @@ const BecomeStoreKeeperForm = ({ userId }) => {
   const handleFileChange = (e) => {
     const file = e.target.files[0];
     if (file) {
-      setFormData((prevData) => ({ ...prevData, shopLogo: file }));
+      setFormData((prevData) => ({ ...prevData, storeImageUrl: file }));
       const reader = new FileReader();
       reader.onload = () => {
         // image uploaded
@@ -61,9 +61,9 @@ const BecomeStoreKeeperForm = ({ userId }) => {
     e.preventDefault();
 
     const {
-      shopName, shopDescription, addressLine1, city, zipCode,
+      storeName, shopDescription, addressLine1, city, zipCode,
       latitude, longitude, businessLicense, accountHolderName,
-      accountNumber, bankName, ifscCode, shopLogo,
+      accountNumber, bankName, ifscCode, storeImageUrl,
     } = formData;
 
     // Validate the userId
@@ -72,7 +72,7 @@ const BecomeStoreKeeperForm = ({ userId }) => {
       return;
     }
 
-    if (Object.values(formData).some((value) => !value && value !== shopLogo)) {
+    if (Object.values(formData).some((value) => !value && value !== storeImageUrl)) {
       setError("All fields are required.");
       return;
     }
@@ -85,11 +85,11 @@ const BecomeStoreKeeperForm = ({ userId }) => {
     setIsUploading(true); // Start the uploading process
 
     try {
-      let shopLogoUrl = "";
-      if (shopLogo) {
-        const storageRef = ref(storage, `storesLogos/${shopLogo.name}`);
-        await uploadBytes(storageRef, shopLogo);
-        shopLogoUrl = await getDownloadURL(storageRef);
+      let storeImageUrlUrl = "";
+      if (storeImageUrl) {
+        const storageRef = ref(storage, `storesLogos/${storeImageUrl.name}`);
+        await uploadBytes(storageRef, storeImageUrl);
+        storeImageUrlUrl = await getDownloadURL(storageRef);
       }
 
       // Create a store document ID using the `doc()` method
@@ -100,9 +100,9 @@ const BecomeStoreKeeperForm = ({ userId }) => {
       await setDoc(storeDocRef, {
         storeId, // Save storeId in the store document
         userId,
-        shopName,
+        storeName,
         shopDescription,
-        shopLogo: shopLogoUrl,
+        storeImageUrl: storeImageUrlUrl,
         address: {
           line1: addressLine1,
           city,
@@ -119,35 +119,28 @@ const BecomeStoreKeeperForm = ({ userId }) => {
           bankName,
           ifscCode,
         },
-        registrationDate: Timestamp.now(),
+        createdAt: new Date().toISOString(),
         isVerified: false,
       });
 
-      // Optionally, update the user document in `difeatusers` to reflect the storekeeper status
       const userDocRef = doc(firestore, "difeatusers", userId);
       await updateDoc(userDocRef, {
-        storeKeeperData: storeDocRef.id, // Store the storeId reference in the user document
+        storeKeeperData: storeDocRef.id, 
         roles: {
           isStoreKeeper: true,
-          isUser: false, // Set isUser to false, since the user is now a storekeeper
+          isUser: false, 
         },
       });
 
-      // Update user context and redirect to the storekeeper dashboard
       const userData = {
         isStoreKeeper: true,  
         isUser: false,         
       };
       setUser(userData);
-      
-      // Redirect to the seller dashboard
-      navigate("/"); // This should point to the seller's dashboard
-
+      navigate("/"); 
       alert("You are now a StoreKeeper!");
-
-      // Clear the form data
       setFormData({
-        shopName: "",
+        storeName: "",
         shopDescription: "",
         addressLine1: "",
         city: "",
@@ -159,7 +152,7 @@ const BecomeStoreKeeperForm = ({ userId }) => {
         accountNumber: "",
         bankName: "",
         ifscCode: "",
-        shopLogo: null, // Reset the file input
+        storeImageUrl: null, // Reset the file input
       });
       
     } catch (err) {
@@ -176,7 +169,7 @@ const BecomeStoreKeeperForm = ({ userId }) => {
 
       <div className="grid gap-4 grid-cols-1 md:grid-cols-2">
         {[
-          { label: "Shop Name", name: "shopName" },
+          { label: "Shop Name", name: "storeName" },
           { label: "Shop Description", name: "shopDescription" },
           { label: "Address Line 1", name: "addressLine1" },
           { label: "City", name: "city" },

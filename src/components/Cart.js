@@ -32,7 +32,7 @@ const Cart = () => {
     };
     fetchAddresses();
   }, []);
-
+  
   useEffect(() => {
     calculateTotals();
   }, [cartItems]);
@@ -71,27 +71,26 @@ const Cart = () => {
       currency: "INR",
       name: "DifEat Services",
       description: "Order Payment",
-      image: "https://example.com/logo.png", // Replace with your logo URL
+      image: "https://example.com/logo.png", 
       handler: async function (response) {
       const orderDate = new Date();
       
       const deliveryDate = new Date();
-      deliveryDate.setDate(orderDate.getDate() + 1); // Adjust the number of days as needed
-
-
+      deliveryDate.setDate(orderDate.getDate() + 1); 
         const orderData = {
-          restaurantName: "DifEat Services", // You can use dynamic data here
+          userId: auth.currentUser.uid,
+          storeId: "1",
+          products:cartItems,
+          totalPrice: grandTotal,
+          status:"pending",
+          createdAt: new Date().toISOString(),
           location: currentLocation,
           orderId: response.razorpay_payment_id,
           orderDate: orderDate,           
           deliveryDate: deliveryDate,   
-          items: cartItems.map(item => `${item.name} (x${item.quantity})`).join(", "), // Cart items list
-          totalPrice: grandTotal,
-          imageUrl: "https://picsum.photos/seed/picsum/200/300", // You can replace with actual image URL resturant image
         };
-
         try {
-          const ordersCollectionRef = collection(firestore, "difeatusers", auth.currentUser.uid, "orders");
+          const ordersCollectionRef = collection(firestore, "orders");
           await addDoc(ordersCollectionRef, orderData);
           handleClearCart();
           alert("Your order has been placed successfully!");

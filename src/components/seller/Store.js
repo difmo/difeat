@@ -86,17 +86,17 @@ const Store = () => {
       {isStoreKeeper ? (
         storeData ? (
           <div>
-            {storeData.shopLogo && (
+            {storeData.storeImageUrl && (
               <div className="mb-4">
                 <img
-                  src={storeData.shopLogo}
-                  alt={`${storeData.shopName} Logo`}
+                  src={storeData.storeImageUrl}
+                  alt={`${storeData.storeName} Logo`}
                   className="w-32 h-32 object-cover rounded-md"
                 />
               </div>
             )}
             <div>
-              <p><strong>Shop Name:</strong> {storeData.shopName}</p>
+              <p><strong>Shop Name:</strong> {storeData.storeName}</p>
               <p><strong>Description:</strong> {storeData.shopDescription}</p>
               <p><strong>Address:</strong> {storeData.address.line1}, {storeData.address.city}, {storeData.address.zipCode}</p>
 

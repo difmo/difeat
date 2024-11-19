@@ -8,7 +8,7 @@ const EditStore = () => {
 
   const [storeData, setStoreData] = useState(null);
   const [formData, setFormData] = useState({
-    shopName: "",
+    storeName: "",
     shopDescription: "",
     addressLine1: "",
     city: "",
@@ -20,7 +20,7 @@ const EditStore = () => {
     accountNumber: "",
     bankName: "",
     ifscCode: "",
-    shopLogo: null, // For storing file input
+    storeImageUrl: null, // For storing file input
   });
 
   const [isUploading, setIsUploading] = useState(false);
@@ -35,7 +35,7 @@ const EditStore = () => {
         const data = storeDocSnap.data();
         setStoreData(data);
         setFormData({
-          shopName: data.shopName,
+          storeName: data.storeName,
           shopDescription: data.shopDescription,
           addressLine1: data.address.line1,
           city: data.address.city,
@@ -47,7 +47,7 @@ const EditStore = () => {
           accountNumber: data.bankDetails.accountNumber,
           bankName: data.bankDetails.bankName,
           ifscCode: data.bankDetails.ifscCode,
-          shopLogo: null, // Reset logo as it's optional
+          storeImageUrl: null, // Reset logo as it's optional
         });
       } else {
         console.log("Store not found");
@@ -65,7 +65,7 @@ const EditStore = () => {
 
   // Handle logo change
   const handleLogoChange = (e) => {
-    setFormData((prevData) => ({ ...prevData, shopLogo: e.target.files[0] }));
+    setFormData((prevData) => ({ ...prevData, storeImageUrl: e.target.files[0] }));
   };
 
   // Handle updating the store data
@@ -73,13 +73,13 @@ const EditStore = () => {
     e.preventDefault();
 
     const {
-      shopName, shopDescription, addressLine1, city, zipCode,
+      storeName, shopDescription, addressLine1, city, zipCode,
       latitude, longitude, businessLicense, accountHolderName,
-      accountNumber, bankName, ifscCode, shopLogo,
+      accountNumber, bankName, ifscCode, storeImageUrl,
     } = formData;
 
     const updatedStoreData = {
-      shopName,
+      storeName,
       shopDescription,
       address: {
         line1: addressLine1,
@@ -99,21 +99,21 @@ const EditStore = () => {
       },
     };
 
-    if (shopLogo) {
+    if (storeImageUrl) {
       setIsUploading(true);
       try {
         // Upload the new logo if present
-        const storageRef = ref(storage, `storesLogos/${shopLogo.name}`);
-        await uploadBytes(storageRef, shopLogo);
+        const storageRef = ref(storage, `storesLogos/${storeImageUrl.name}`);
+        await uploadBytes(storageRef, storeImageUrl);
         const logoUrl = await getDownloadURL(storageRef);
-        updatedStoreData.shopLogo = logoUrl; // Update logo URL
+        updatedStoreData.storeImageUrl = logoUrl; // Update logo URL
       } catch (error) {
         console.error("Error uploading logo:", error);
       } finally {
         setIsUploading(false);
       }
     } else {
-      updatedStoreData.shopLogo = storeData.shopLogo; // Keep the existing logo if no new one
+      updatedStoreData.storeImageUrl = storeData.storeImageUrl; // Keep the existing logo if no new one
     }
 
     // Update the store document in Firestore
@@ -122,7 +122,7 @@ const EditStore = () => {
       await updateDoc(storeDocRef, updatedStoreData);
       console.log("Store updated successfully!");
       alert("Store updated successfully!");
-      navigate("/profile"); // Redirect to settings page after successful update
+      navigate("/"); // Redirect to settings page after successful update
     } catch (error) {
       console.error("Error updating store:", error);
     }
@@ -138,14 +138,14 @@ const EditStore = () => {
       <form onSubmit={handleUpdateStore}>
         {/* Shop Name */}
         <div className="mb-4">
-          <label htmlFor="shopName" className="block text-sm font-medium text-gray-700">
+          <label htmlFor="storeName" className="block text-sm font-medium text-gray-700">
             Shop Name
           </label>
           <input
             type="text"
-            id="shopName"
-            name="shopName"
-            value={formData.shopName}
+            id="storeName"
+            name="storeName"
+            value={formData.storeName}
             onChange={handleInputChange}
             className="mt-1 p-2 border rounded-md w-full"
             required
@@ -330,18 +330,18 @@ const EditStore = () => {
 
         {/* Shop Logo (Optional) */}
         <div className="mb-4">
-          <label htmlFor="shopLogo" className="block text-sm font-medium text-gray-700">
+          <label htmlFor="storeImageUrl" className="block text-sm font-medium text-gray-700">
             Shop Logo (Optional)
           </label>
           <input
             type="file"
-            id="shopLogo"
-            name="shopLogo"
+            id="storeImageUrl"
+            name="storeImageUrl"
             onChange={handleLogoChange}
             className="mt-1 p-2 border rounded-md w-full"
             accept="image/*"
           />
-          {formData.shopLogo && <p className="mt-2 text-sm text-gray-500">Selected file: {formData.shopLogo.name}</p>}
+          {formData.storeImageUrl && <p className="mt-2 text-sm text-gray-500">Selected file: {formData.storeImageUrl.name}</p>}
         </div>
 
         {/* Submit Button */}

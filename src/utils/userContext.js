@@ -1,12 +1,12 @@
 // src/utils/userContext.js
 import React, { createContext, useState, useEffect } from "react";
 import { auth, firestore, onSnapshot, doc,onAuthStateChanged,getDoc } from "../../firebase";
-
 const userContext = createContext();
 
 export const UserProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
+
   useEffect(() => {
     const fetchUserData = async (userUid) => {
       try {
@@ -29,7 +29,6 @@ export const UserProvider = ({ children }) => {
       } else {
         console.warn("User document not found");
         setUser(null);
-        // navigate("/login");
       }
     });
 

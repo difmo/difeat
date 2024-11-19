@@ -8,49 +8,89 @@ import useOnline from "../utils/useOnline";
 import userContext from "../utils/userContext";
 import useGeoLocation from "./useGeoLocation";
 import { current } from "@reduxjs/toolkit";
+import {
+  auth,
+  onAuthStateChanged,
+  firestore,
+  storage,
+  signOut,
+  doc,
+  getDoc,
+  collection,
+  getDocs,
+} from "../../firebase";
 
 const Body = (
   {
     /*user*/
   }
 ) => {
-  const [allRestaurants, setAllRestaurants] = useState([]);
-  const [filteredRestaurants, setFilteredRestaurants] = useState([]);
+  const [allStores, setAllStores] = useState([]);
+  const [filteredStores, setFilteredStores] = useState([]);
   const [searchText, setSearchText] = useState("");
   const { user, setUser } = useContext(userContext);
   const [geolocation, setGeoLocation] = useState();
+  const [userDetails, setUserDetails] = useState(null);
 
-  const DATA_LINKS = constants();
-  const FETCH_SWIGGY_DAPI = DATA_LINKS.SWIGGY_DAPI;
-  const FETCH_SWIGGY_MAPI = DATA_LINKS.SWIGGY_MAPI;
 
-  useEffect(() => {}, []);
 
   useEffect(() => {
-    getRestaurants();
-  }, [FETCH_SWIGGY_DAPI]);
+    const fetchUserData = async (userUid) => {
+      try {
+        const userDocRef = doc(firestore, "difeatusers", userUid);
+        const userDoc = await getDoc(userDocRef);
+        if (userDoc.exists()) {
+          setUserDetails(userDoc.data());
+        } else {
+          console.error("No such user document!");
+        }
+        const storesCollectionRef = collection(firestore, "stores");
+        const storesSnapshot = await getDocs(storesCollectionRef);
+        const stores = storesSnapshot.docs.map((doc) => ({...doc.data(),
+        }));
+  
+        setAllStores(stores); 
+        setFilteredStores(stores); 
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      } finally {
+        setIsLoading(false); 
+      }
+    };
+  
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      if (user) {
+        fetchUserData(user.uid);
+      } else {
+        // navigate("/"); 
+      }
+    });
+  
+    return () => unsubscribe();
+  }, []); 
+  
 
-  const getRestaurants = async () => {
-    const REST_URL =
-      (window.innerWidth >= 480
-        ? ( FETCH_SWIGGY_DAPI )
-        : ( FETCH_SWIGGY_MAPI)
-      );
-      console.log(REST_URL);
-    const data = await fetch(REST_URL);
-    console.log(data, "hehehe");
-    // console.log("api call bani useEffect me", geolocation.latitude);
-    const json = await data.json();
-    console.log(json);
-    const restList = json?.data?.cards[2]?.card?.card?.gridElements?.infoWithStyle?.restaurants
-    const restList2 = json?.data?.cards[4]?.card?.card?.gridElements?.infoWithStyle?.restaurants
-    const restData = restList?.length > 0 ? restList : restList2 ;
-    console.log({restData})
-    console.log({restList2})
-    console.log({restList})
-    setAllRestaurants(restData);
-    setFilteredRestaurants(restData);
-    console.log(allRestaurants);
+
+
+ 
+  useEffect(() => {
+    getStores();
+  }, []);
+
+  const getStores = async () => {
+    try {
+      const storesCollectionRef = collection(firestore, "stores");
+      const storesSnapshot = await getDocs(storesCollectionRef);
+      const stores = storesSnapshot.docs.map((doc) => ({...doc.data(),
+      }));
+
+      setAllStores(stores); 
+      setFilteredStores(stores); 
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    } finally {
+      // setIsLoading(false); 
+    }
   };
 
   const isOnline = useOnline();
@@ -59,12 +99,8 @@ const Body = (
     return <h1>🔴 Offline, please check your internet connection!!</h1>;
   }
 
-  // not render component (Early return)
-  if (allRestaurants?.length === 0) return <Shimmer />;
 
-  // return allRestaurants?.length === 0 ? (
-  //   <Shimmer />
-  // ) :
+  if (allStores?.length === 0) return <Shimmer />;
   return (
     <div className="mx-8 ">
       <div className="flex flex-col items-center justify-between md:flex md:flex-row">
@@ -81,51 +117,38 @@ const Body = (
           <button
             className="text-xs font-medium shadow-md px-2 py-2 outline-none  rounded bg-[#fb0b0f] hover:bg-green-500 transition-all duration-200 ease-in-out text-white"
             onClick={() => {
-              //need to filter the data
-              const filteredRestaurant = allRestaurants.filter(
-                (res) =>
-                  res?.info?.name
+              
+              const filteredStores = allStores.filter(
+                (store) =>
+                  store?.storeName
                     .toLowerCase()
                     .includes(searchText.toLowerCase()) ||
-                  res?.info?.cuisines
+                    store?.shopDescription
                     .join(", ")
                     .toLowerCase()
                     .includes(searchText.toLowerCase())
               );
               // update the state - restaurants
-              setFilteredRestaurants(filteredRestaurant);
+              setFilteredStores(filteredStores);
             }}
           >
             Search
           </button>
         </div>
-
-        {/* <input value={user.name} onChange={
-          e => setUser({
-            ...user,
-            name: e.target.value,
-          })
-        }></input>
-         <input value={user.email} onChange={
-          e => setUser({
-            ...user,
-            email: e.target.value,
-          })
-        }></input> */}
       </div>
       <div>
-        {/* hi {location.loaded ? JSON.stringify(location) : "location not available"}
-        hii {location.coordinates.lat} */}
+         {location.loaded ? JSON.stringify(location) : "location is not available"}
+        {location?.coordinates?.lat}
       </div>
       <div className="flex flex-col items-center justify-center gap-2 my-2 md:flex-row md:flex-wrap md:my-0">
         {/* You have to write logic for NO restraunt fount here */}
-        {filteredRestaurants?.map((restaurant) => {
+        {filteredStores?.map((store) => {
           return (
             <Link
-              to={"/restaurant/" + restaurant.info.id}
-              key={restaurant.info.id}
+              to={"/restaurant/" + store.storeId}
+              key={store.storeId}
             >
-              <RestaurantCard resData={restaurant.info} user={user} />
+              <RestaurantCard resData={store} user={user} />
             </Link>
           );
         })}

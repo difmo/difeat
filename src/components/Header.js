@@ -5,7 +5,7 @@ import useOnline from "../utils/useOnline";
 import userContext from "../utils/userContext";
 import { useSelector } from "react-redux";
 import BottomNav from "./BottomNav";
-import { auth, onAuthStateChanged, signOut ,doc,firestore,getDoc} from "../../firebase";
+import { auth, onAuthStateChanged, signOut, doc, firestore, getDoc } from "../../firebase";
 
 // Logo component
 const Title = () => (
@@ -26,17 +26,6 @@ const Header = () => {
 
   // Manage login state based on token presence
   const [isLoggedin, setIsLoggedin] = useState(!!localStorage.getItem("token"));
-  const [city, setCity] = useState("");
-  const [ctime, setCtime] = useState(new Date().toLocaleTimeString());
-
-  useEffect(() => {
-    // Timer to update current time every second
-    const interval = setInterval(() => {
-      setCtime(new Date().toLocaleTimeString());
-    }, 1000);
-
-    return () => clearInterval(interval);
-  }, []);
 
   useEffect(() => {
     const fetchUserData = async (userUid) => {
@@ -46,7 +35,7 @@ const Header = () => {
         if (userDoc.exists()) {
           const userData = userDoc.data();
           setUserDetails(userData);
-          setProfileImageUrl(userData.profileImageUrl || "");
+          setProfileImageUrl(userData.profile?.profileImageUrl || "");
         }
       } catch (error) {
         console.error("Error fetching data:", error);
@@ -54,14 +43,11 @@ const Header = () => {
         setIsLoading(false);
       }
     };
-    
-
 
     const unsubscribe = onAuthStateChanged(auth, (user) => {
       if (user) {
         fetchUserData(user.uid);
-        const token = localStorage.getItem("token") || "user-auth-token"; 
-        localStorage.setItem("token", token);
+        localStorage.setItem("token", user.accessToken || "user-auth-token");
         setIsLoggedin(true);
         console.log("User logged in");
       } else {
@@ -71,10 +57,9 @@ const Header = () => {
         console.log("User logged out");
       }
     });
+
     return () => unsubscribe();
   }, []);
-
-
 
   return (
     <>
@@ -120,10 +105,20 @@ const Header = () => {
               </Link>
             </li>
             <li>
-              {isLoggedin ? (
-                <button onClick={() => navigate("/profile")} className="logout-btn">
-                  {/* {userDetails.displayName} */}
-                  Dinesh kumar
+              {isLoading ? (
+                "Loading..."
+              ) : isLoggedin ? (
+                <button
+                  onClick={() =>
+                    userDetails?.roles?.isStoreKeeper
+                      ? navigate("/")
+                      : navigate("/profile")
+                  }
+                  className="logout-btn"
+                >
+                  {userDetails?.profile?.name
+                    ?? userDetails?.profile?.phoneNumber
+                    ?? "Guest"}
                 </button>
               ) : (
                 <button onClick={() => navigate("/login")} className="login-btn">
