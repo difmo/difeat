@@ -24,7 +24,7 @@ const Products = ({ storeId ,userId}) => {
     category: "",
     stock: 0,
     SKU: "",
-    logo: ""
+    productImageUrl: ""
   });
 const [logoFile, setLogoFile] = useState(null);
 console.log("storeId",storeId);
@@ -64,13 +64,13 @@ console.log("storeId",storeId);
   const handleAddProduct = async () => {
     try {
       const logoUrl = await uploadLogo();
-      const productData = { ...newProduct,createdBy:userId, logo: logoUrl };
+      const productData = { ...newProduct,createdBy:userId, productImageUrl: logoUrl };
 
       const productCollectionRef = collection(firestore, "stores", storeId, "products");
       const docRef = await addDoc(productCollectionRef, productData);
 
       setProducts([...products, { id: docRef.id, ...productData }]);
-      setNewProduct({ name: "", description: "", price: "", category: "", stock: 0, SKU: "", logo: "" });
+      setNewProduct({ name: "", description: "", price: "", category: "", stock: 0, SKU: "", productImageUrl: "" });
       setLogoFile(null);
       alert("Product added successfully.");
     } catch (error) {
@@ -81,11 +81,11 @@ console.log("storeId",storeId);
   // Update an existing product
   const handleSaveEdit = async (productId) => {
     try {
-      let logoUrl = isEditingProduct.logo;
+      let logoUrl = isEditingProduct.productImageUrl;
       if (logoFile) {
         logoUrl = await uploadLogo();
       }
-      const productData = { ...isEditingProduct, logo: logoUrl };
+      const productData = { ...isEditingProduct, productImageUrl: logoUrl };
       const productDocRef = doc(firestore, "stores", storeId, "products", productId);
 
       await updateDoc(productDocRef, productData);

@@ -32,7 +32,7 @@ const ItemList = ({items,storeId}) => {
                   <div className="flex items-center gap-2">
                    <span className="font-semibold">
                    &#8377;
-                   {item.price /100 || item.price /100}
+                   {item.price || item.price}
                    </span>
                   </div>
                   <p className="text-xs text-[#535665] ">
