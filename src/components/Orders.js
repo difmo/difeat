@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { collection, getDocs, query, where } from "firebase/firestore";
 import { firestore, auth } from "../../firebase";
 import OrderCard from "./OrderCard";
+import LoaderComponent from "./LoaderComponent";
 
 const Orders = () => {
   const [orders, setOrders] = useState([]);
@@ -40,7 +41,7 @@ const Orders = () => {
     <div className="p-6">
       <h2 className="text-2xl font-bold mb-6">Past Orders</h2>
       {loading ? (
-        <p className="text-center text-gray-500">Loading orders...</p>
+         <LoaderComponent/>
       ) : orders.length > 0 ? (
         orders.map((order) => (
         <OrderCard 

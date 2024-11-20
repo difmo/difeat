@@ -19,6 +19,7 @@ import { useNavigate } from "react-router-dom";
 import Orders from "./Orders";
 import Addresses from "./Addresses";
 import Settings from "./Settings";
+import LoaderComponent from "./LoaderComponent";
 
 const EditProfile = () => {
   const [userDetails, setUserDetails] = useState(null);
@@ -110,7 +111,12 @@ const EditProfile = () => {
     }
   };
 
-  if (isLoading) return <p>Loading...</p>;
+  if (isLoading) {
+    return (
+      <LoaderComponent/>
+      
+    );
+  }
 
   return (
     <div className="flex flex-col items-center md:flex-row md:items-start md:space-x-8 p-6 md:p-10 bg-gray-50 min-h-screen">
