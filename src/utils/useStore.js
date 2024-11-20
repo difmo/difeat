@@ -24,7 +24,6 @@ const useStore = (storeId) => {
       setIsLoading(true);
       const storeDocRef = doc(firestore, "stores", storeId);
       const storeDoc = await getDoc(storeDocRef);
-
       if (storeDoc.exists()) {
         setStore(storeDoc.data());
       } else {
@@ -45,7 +44,6 @@ const useStore = (storeId) => {
       const productsCollectionRef = collection(firestore, "stores", storeId, "products");
       const productsSnapshot = await getDocs(productsCollectionRef);
       const productsList = productsSnapshot.docs.map((doc) => (doc.data()));
-
       setProducts(productsList);
     } catch (err) {
       console.error("Error fetching products:", err);

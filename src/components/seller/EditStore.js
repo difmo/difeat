@@ -122,7 +122,7 @@ const EditStore = () => {
       await updateDoc(storeDocRef, updatedStoreData);
       console.log("Store updated successfully!");
       alert("Store updated successfully!");
-      navigate("/"); // Redirect to settings page after successful update
+      navigate("/");
     } catch (error) {
       console.error("Error updating store:", error);
     }

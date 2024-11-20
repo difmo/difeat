@@ -113,15 +113,19 @@ const EditProfile = () => {
   if (isLoading) return <p>Loading...</p>;
 
   return (
-    <div className="flex flex-col items-center md:flex-row md:items-start md:space-x-8 p-4 md:p-8 bg-gray-100 min-h-screen">
-      <div className="bg-white rounded-lg shadow-md w-full md:w-1/3 p-6 text-center">
+    <div className="flex flex-col items-center md:flex-row md:items-start md:space-x-8 p-6 md:p-10 bg-gray-50 min-h-screen">
+      {/* Profile Card */}
+      <div className="bg-white rounded-lg shadow-lg w-full md:w-1/3 lg:w-1/4 p-6 text-center flex flex-col items-center space-y-6">
         <div className="relative mx-auto w-32 h-32 rounded-full overflow-hidden">
           <img
             src={profileImageUrl || "https://via.placeholder.com/150"}
             alt="Profile"
             className="w-full h-full object-cover"
           />
-          <label htmlFor="profileImage" className="absolute bottom-0 right-0 p-2 bg-gray-200 rounded-full cursor-pointer">
+          <label
+            htmlFor="profileImage"
+            className="absolute bottom-0 right-0 p-2 bg-gray-200 rounded-full cursor-pointer transition transform hover:scale-110"
+          >
             <FaCamera className="text-gray-700" />
           </label>
           <input
@@ -132,34 +136,44 @@ const EditProfile = () => {
             className="hidden"
           />
         </div>
-        <input
-          type="text"
-          className="border border-gray-300 p-2 rounded mt-4 w-full"
-          value={userDetails?.profile?.name || ""}
-          onChange={(e) =>
-            setUserDetails((prevState) => ({
-              ...prevState,
-              profile: { ...prevState.profile, name: e.target.value },
-            }))
-          }
-          placeholder="Name"
-        />
-        <input
-          type="email"
-          className="border border-gray-300 p-2 rounded mt-2 w-full"
-          value={userDetails?.profile?.email || ""}
-          onChange={(e) =>
-            setUserDetails((prevState) => ({
-              ...prevState,
-              profile: { ...prevState.profile, email: e.target.value },
-            }))
-          }
-          placeholder="Email"
-        />
-        <button onClick={handleEditProfile} className="mt-4 bg-blue-500 text-white px-4 py-2 rounded w-full">
-          Save
+
+        {/* Name and Email Inputs */}
+        <div className="w-full space-y-4">
+          <input
+            type="text"
+            className="border border-gray-300 p-3 rounded-lg w-full"
+            value={userDetails?.profile?.name || ""}
+            onChange={(e) =>
+              setUserDetails((prevState) => ({
+                ...prevState,
+                profile: { ...prevState.profile, name: e.target.value },
+              }))
+            }
+            placeholder="Enter your name"
+          />
+          <input
+            type="email"
+            className="border border-gray-300 p-3 rounded-lg w-full"
+            value={userDetails?.profile?.email || ""}
+            onChange={(e) =>
+              setUserDetails((prevState) => ({
+                ...prevState,
+                profile: { ...prevState.profile, email: e.target.value },
+              }))
+            }
+            placeholder="Enter your email"
+          />
+        </div>
+
+        {/* Save Button */}
+        <button
+          onClick={handleEditProfile}
+          className="mt-4 bg-blue-600 text-white px-6 py-3 rounded-lg w-full hover:bg-blue-700 focus:outline-none"
+        >
+          Save Changes
         </button>
       </div>
+
     </div>
   );
 };

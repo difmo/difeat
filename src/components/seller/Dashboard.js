@@ -6,53 +6,45 @@ import {
 } from "../../../firebase";
 import {   FaSignOutAlt, FaBox, FaMapMarkerAlt, FaCog } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
-import Orders from "../Orders";
-import Addresses from "../Addresses";
-import Settings from "../Settings";
 import EditProfile from "../EditProfile";
 import Store from "./Store";
 import Home from "./Home";
 import Products from "./Products";
 import SellerSttings from "./SellerSettings";
 import SellerOrders from "./SellerOrders";
+import LoaderComponent from "../LoaderComponent";
 const Dashboard = () => {
   const [userDetails, setUserDetails] = useState(null);
-  const [orders, setOrders] = useState([]);
   const [addresses, setAddresses] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isEditingProfile, setIsEditingProfile] = useState(false);
-  const [editFormData, setEditFormData] = useState({ displayName: "", email: "" });
+  const [editFormData, setEditFormData] = useState({ name: "", email: "" });
   const [profileImage, setProfileImage] = useState(null);
   const [profileImageUrl, setProfileImageUrl] = useState("");
   const [storeData, setStoreData] = useState(null);
   const navigate = useNavigate();
-  const [activeTab, setActiveTab] = useState("Profile");
+  const [activeTab, setActiveTab] = useState("Home");
   useEffect(() => {
     const fetchUserData = async (userUid) => {
       try {
+        // get data from difeat users collection 
         const userDocRef = doc(firestore, "difeatusers", userUid);
         const userDoc = await getDoc(userDocRef);
         if (userDoc.exists()) {
           const userData = userDoc.data();
           setUserDetails(userData);
-          setEditFormData({ displayName: userData.displayName, email: userData.email });
-          setProfileImageUrl(userData.profileImageUrl || ""); // Set image URL if available
+          setEditFormData({ name: userData.profile.name, email: userData.profile.email });
+          setProfileImageUrl(userData.profile.profileImageUrl || ""); // Set image URL if available
         }
-        
-  
-        const ordersCollectionRef = collection(firestore, "difeatusers", userUid, "orders");
-        const ordersSnapshot = await getDocs(ordersCollectionRef);
-        setOrders(ordersSnapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() })));
+        // Get address fro difeat users 
         const addressesCollectionRef = collection(firestore, "difeatusers", userUid, "addresses");
         const addressesSnapshot = await getDocs(addressesCollectionRef);
         setAddresses(addressesSnapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() })));
-
         console.log("currentUserID :", userUid);
 
-        // Reference the collection, then use a query
+        // get Store for Stores
         const storesCollectionRef = collection(firestore, "stores");
         const q = query(storesCollectionRef, where("userId", "==", userUid));
-        
         const querySnapshot = await getDocs(q);
         if (!querySnapshot.empty) {
           // Assuming there’s only one store per user
@@ -82,7 +74,14 @@ const Dashboard = () => {
     return () => unsubscribe(); 
   }, []);
 
-  // if (isLoading) return <p>Loading...</p>;
+
+  if (isLoading) {
+    return (
+      <LoaderComponent/>
+      
+    );
+  }
+
 
   return (
     <div className="flex min-h-screen bg-grey-100">
@@ -94,12 +93,15 @@ const Dashboard = () => {
             alt="Profile"
             className="w-24 h-24 rounded-full object-cover mx-auto mb-4"
           />
-          <h2 className="text-2xl font-bold">{userDetails?.displayName} <button onClick={() => setIsEditingProfile(!isEditingProfile)} className="mt-4 text-blue-500 flex items-center">
-          Edit Profile
-          </button></h2>
-          <p className="text-sm opacity-80 mt-1">{userDetails?.phoneNumber} · {userDetails?.email}</p>
+          <h2 className="text-2xl font-bold">{userDetails?.profile?.name}</h2>
+       
+          <p className="text-sm opacity-80 mt-1">{userDetails?.profile?.phoneNumber} · {userDetails?.profile?.email}</p>
         </div>
 
+        <h2 className="font-bold mb-4">
+          <button onClick={() => setIsEditingProfile(!isEditingProfile)} className="mt-4 text-blue-500 flex items-center">
+          Edit Profile
+          </button></h2>
         <div>
          
          
@@ -142,9 +144,8 @@ const Dashboard = () => {
       <div className="flex-1 p-8">
         
         {isEditingProfile &&( <EditProfile />)}
-        {activeTab === "Home" && <Home />}
+        {activeTab === "Home" && storeData&&<Home storeId={storeData?.storeId} userId={storeData?.userId}/>}
         {activeTab === "Store" && <Store />}
-        {/* {activeTab === "Profile" && <SellerOrders storeId={storeData.storeId} userId={storeData.userId} />} */}
         {activeTab === "Orders" && <SellerOrders storeId={storeData.storeId} userId={storeData.userId}/>}
         {activeTab === "Products" && <Products storeId={storeData.storeId} userId={storeData.userId}/>}
         {activeTab === "SellerSttings" && <SellerSttings storeId={storeData.storeId} />}

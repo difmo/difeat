@@ -110,7 +110,7 @@ const Login = () => {
         // User doesn't exist, create the user document
         const userData = {
           profile: {
-            uid: user.uid,
+            userId: user.uid,
             phoneNumber: user.phoneNumber,
             createdAt: new Date().toISOString(),
             name: user.displayName || "Guest",
@@ -138,7 +138,7 @@ const Login = () => {
         // User exists, fetch the existing user data
         const userData = userDoc.data();
         console.log("User already exists in Firestore:", user.uid);
-  
+
         setLoading(false);  // Stop loading
         handleLogin(userData, user);  // Pass existing userData and user object to handleLogin
       }
