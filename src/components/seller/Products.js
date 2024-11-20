@@ -26,10 +26,9 @@ const Products = ({ storeId ,userId}) => {
     SKU: "",
     logo: ""
   });
-  const [logoFile, setLogoFile] = useState(null);
+const [logoFile, setLogoFile] = useState(null);
 console.log("storeId",storeId);
-
-  useEffect(() => {
+  useEffect(()=> {
     const fetchProducts = async () => {
       const productsCollectionRef = collection(firestore, "stores", storeId, "products");
       const productSnapshot = await getDocs(productsCollectionRef);

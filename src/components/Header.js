@@ -21,7 +21,7 @@ const Header = () => {
   const { user } = useContext(userContext);
   const [userDetails, setUserDetails] = useState(null);
   const [profileImageUrl, setProfileImageUrl] = useState("");
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(false);
   const cartItems = useSelector((store) => store.cart.items);
 
   // Manage login state based on token presence
@@ -36,6 +36,10 @@ const Header = () => {
           const userData = userDoc.data();
           setUserDetails(userData);
           setProfileImageUrl(userData.profile?.profileImageUrl || "");
+          setIsLoading(false);
+        }else{
+          console.log("User Details : ","Not found");
+          setIsLoading(false);
         }
       } catch (error) {
         console.error("Error fetching data:", error);
