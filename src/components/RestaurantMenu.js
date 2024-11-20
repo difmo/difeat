@@ -5,6 +5,7 @@ import Shimmer from "./Shimmer";
 import { ShimmerMenu } from "./Shimmer";
 import RestaurantCategory from "./RestaurantCategory";
 import useStore from "../utils/useStore";
+import LoaderComponent from "./LoaderComponent";
 
 const RestaurantMenu = () => {
   const { resId } = useParams();
@@ -13,9 +14,14 @@ const RestaurantMenu = () => {
 
   console.log("hiiii",store);
 
+
   if (isLoading) {
-    return <div>Loading store data...</div>;
+    return (
+      <LoaderComponent/>
+      
+    );
   }
+
 
   if (error) {
     return <div>Error loading store: {error.message}</div>;
