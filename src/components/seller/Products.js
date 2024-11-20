@@ -203,7 +203,7 @@ console.log("storeId",storeId);
                 <p>Category: {product.category}</p>
                 <p>Stock: {product.stock}</p>
                 <p>SKU: {product.SKU}</p>
-                {product.logo && <img src={product.logo} alt="Product Logo" className="w-16 h-16 mt-2" />}
+                {product.productImageUrl && <img src={product.productImageUrl} alt="Product Logo" className="w-16 h-16 mt-2" />}
                 <div className="flex space-x-4 mt-2">
                   <button
                     onClick={() => setIsEditingProduct(product)}

@@ -1,7 +1,7 @@
 import { initializeApp } from "firebase/app";
 import { getAuth, PhoneAuthProvider, RecaptchaVerifier ,signInWithCredential,signOut,onAuthStateChanged} from "firebase/auth";
 import { getFirestore, doc, setDoc , getDoc, collection, getDocs, updateDoc, addDoc, deleteDoc,Timestamp,query, where,} from "firebase/firestore";
-import { getStorage, ref, uploadBytes, getDownloadURL ,uploadBytesResumable} from "firebase/storage";
+import { getStorage, ref, uploadBytes, getDownloadURL ,uploadBytesResumable,deleteObject} from "firebase/storage";
 // Your web app's Firebase configuration
 const firebaseConfig = {
   apiKey: "AIzaSyAcyNrL_6sDErQXwG9-do3LANTMh6nQ0T4",
@@ -20,4 +20,4 @@ const auth = getAuth(app);
 const firestore = getFirestore(app);
 const storage = getStorage(app);
 
-export {uploadBytesResumable,auth, signOut, PhoneAuthProvider, RecaptchaVerifier, signInWithCredential, setDoc, firestore, onAuthStateChanged, doc, getDoc, collection, getDocs, updateDoc, addDoc, deleteDoc, storage, ref, uploadBytes, getDownloadURL,Timestamp ,query, where,};
+export {deleteObject,uploadBytesResumable,auth, signOut, PhoneAuthProvider, RecaptchaVerifier, signInWithCredential, setDoc, firestore, onAuthStateChanged, doc, getDoc, collection, getDocs, updateDoc, addDoc, deleteDoc, storage, ref, uploadBytes, getDownloadURL,Timestamp ,query, where,};

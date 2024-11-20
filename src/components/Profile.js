@@ -3,14 +3,19 @@ import {
   auth,
   onAuthStateChanged,
   firestore,
-  storage,
   signOut,
   doc,
   getDoc,
   collection,
   getDocs,
 } from "../../firebase";
-import { FaSignOutAlt, FaBox, FaMapMarkerAlt, FaCog } from "react-icons/fa";
+import {
+  FaSignOutAlt,
+  FaUserEdit,
+  FaShoppingBag,
+  FaMapMarkerAlt,
+  FaCog,
+} from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 import Orders from "./Orders";
 import Addresses from "./Addresses";
@@ -23,8 +28,6 @@ const Profile = () => {
   const [orders, setOrders] = useState([]);
   const [addresses, setAddresses] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
-  const [isEditingProfile, setIsEditingProfile] = useState(false);
-  const [profileImageUrl, setProfileImageUrl] = useState("");
   const [activeTab, setActiveTab] = useState("Orders");
   const navigate = useNavigate();
 
@@ -34,18 +37,28 @@ const Profile = () => {
         const userDocRef = doc(firestore, "difeatusers", userUid);
         const userDoc = await getDoc(userDocRef);
         if (userDoc.exists()) {
-          const userData = userDoc.data();
-          setUserDetails(userData);
-          setProfileImageUrl(userData.profile?.profileImageUrl || ""); // Access profile map field
+          setUserDetails(userDoc.data());
         }
 
-        const ordersCollectionRef = collection(firestore, "difeatusers", userUid, "orders");
+        const ordersCollectionRef = collection(
+          firestore,
+          "difeatusers",
+          userUid,
+          "orders"
+        );
         const ordersSnapshot = await getDocs(ordersCollectionRef);
         setOrders(ordersSnapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() })));
 
-        const addressesCollectionRef = collection(firestore, "difeatusers", userUid, "addresses");
+        const addressesCollectionRef = collection(
+          firestore,
+          "difeatusers",
+          userUid,
+          "addresses"
+        );
         const addressesSnapshot = await getDocs(addressesCollectionRef);
-        setAddresses(addressesSnapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() })));
+        setAddresses(
+          addressesSnapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }))
+        );
       } catch (error) {
         console.error("Error fetching data:", error);
       } finally {
@@ -64,76 +77,64 @@ const Profile = () => {
     return () => unsubscribe();
   }, [navigate]);
 
-
   if (isLoading) {
-    return (
-      <LoaderComponent/>
-      
-    );
+    return <LoaderComponent />;
   }
 
   return (
-    <div className="flex min-h-screen bg-gray-100">
+    <div className="flex min-h-screen bg-gradient-to-br from-[#fef4e8] to-[#ffe6d4]">
       {/* Sidebar */}
-      <div className="bg-blue-800 text-white p-6 flex flex-col">
-        <div className="mb-8">
+      <div className="bg-[#fc8019] text-white p-6 flex flex-col w-64 shadow-lg">
+        <div className="mb-8 text-center">
           <img
-            src={profileImageUrl || "https://via.placeholder.com/150"}
+            src={userDetails?.profile?.profileImageUrl || "https://via.placeholder.com/150"}
             alt="Profile"
-            className="w-24 h-24 rounded-full object-cover mx-auto mb-4"
+            className="w-24 h-24 rounded-full object-cover mx-auto mb-4 shadow-md"
           />
-          <h2 className="text-2xl font-bold text-center">{userDetails?.profile?.name}</h2>
-          <p className="text-sm opacity-80 mt-1 text-center">{userDetails?.profile?.email}</p>
+          <h2 className="text-2xl font-bold">{userDetails?.profile?.name}</h2>
+          <p className="text-sm opacity-80 mt-1">{userDetails?.profile?.email}</p>
         </div>
 
         <nav className="flex flex-col space-y-4">
-          <button
-            onClick={() => {
-              setActiveTab("EditProfile");
-            }}
-            className="flex items-center text-white opacity-90 hover:opacity-100 hover:font-semibold"
-          >
-            <FaBox className="mr-3" /> Edit Profile
-          </button>
+          {[
+            { label: "Edit Profile", icon: <FaUserEdit />, tab: "EditProfile" },
+            { label: "Orders", icon: <FaShoppingBag />, tab: "Orders" },
+            { label: "Addresses", icon: <FaMapMarkerAlt />, tab: "Addresses" },
+            { label: "Settings", icon: <FaCog />, tab: "Settings" },
+          ].map(({ label, icon, tab }) => (
+            <button
+              key={tab}
+              onClick={() => setActiveTab(tab)}
+              className={`flex items-center py-3 px-4 rounded-lg transition-all duration-300 ${
+                activeTab === tab
+                  ? "bg-[#ff6700] shadow-md scale-105"
+                  : "bg-opacity-10 hover:bg-opacity-20"
+              }`}
+            >
+              <span className="mr-3 text-lg">{icon}</span>
+              <span className="font-medium">{label}</span>
+            </button>
+          ))}
 
-          <button
-            onClick={() => {
-              setActiveTab("Orders");
-            }}
-            className="flex items-center text-white opacity-90 hover:opacity-100 hover:font-semibold"
-          >
-            <FaBox className="mr-3" /> Orders
-          </button>
-
-          <button
-            onClick={() => setActiveTab("Addresses")}
-            className="flex items-center text-white opacity-90 hover:opacity-100 hover:font-semibold"
-          >
-            <FaMapMarkerAlt className="mr-3" /> Addresses
-          </button>
-          <button
-            onClick={() => setActiveTab("Settings")}
-            className="flex items-center text-white opacity-90 hover:opacity-100 hover:font-semibold"
-          >
-            <FaCog className="mr-3" /> Settings
-          </button>
           <button
             onClick={() => signOut(auth)}
-            className="flex items-center text-white opacity-90 hover:opacity-100 hover:font-semibold mt-auto"
+            className="flex items-center mt-auto py-3 px-4 rounded-lg bg-opacity-10 hover:bg-opacity-20 transition-all duration-300"
           >
-            <FaSignOutAlt className="mr-3" /> Sign Out
+            <FaSignOutAlt className="mr-3 text-lg" />
+            <span className="font-medium">Sign Out</span>
           </button>
         </nav>
       </div>
 
-
-      <div className="flex-1 p-8">
-        {activeTab === "EditProfile" && (<EditProfile userDetails={userDetails} setUserDetails={setUserDetails} profileImageUrl={profileImageUrl} setProfileImageUrl={setProfileImageUrl} />)}
+      {/* Content Area */}
+      <div className="flex-1 p-8 bg-white shadow-md rounded-tl-lg">
+        {activeTab === "EditProfile" && (
+          <EditProfile userDetails={userDetails} setUserDetails={setUserDetails} />
+        )}
         {activeTab === "Orders" && <Orders orders={orders} />}
         {activeTab === "Addresses" && <Addresses addresses={addresses} />}
         {activeTab === "Settings" && <Settings />}
       </div>
-
     </div>
   );
 };

@@ -88,86 +88,57 @@ const Store = () => {
   }
 
   return (
-    <div className="mt-6 bg-white p-6 rounded-lg shadow-lg max-w-full sm:max-w-xl lg:max-w-2xl mx-auto">
-      <h3 className="font-semibold text-xl sm:text-2xl mb-4">Store Details</h3>
-
-      {/* Store Image */}
-      {storeData && storeData.storeImageUrl && (
-        <div className="mb-6 flex justify-center">
-          <img
-            src={storeData.storeImageUrl}
-            alt={`${storeData.storeName} Logo`}
-            className="w-32 h-32 object-cover rounded-full sm:w-40 sm:h-40"
-          />
+    <div className="max-w-4xl mx-auto mt-10 bg-white rounded-lg shadow-lg overflow-hidden">
+      <div className="bg-gradient-to-r from-blue-500 to-blue-700 p-6">
+        <h2 className="text-2xl font-semibold text-white">{storeData?.storeName}</h2>
+        <p className="text-gray-200 text-sm">{storeData?.address?.line1}, {storeData?.address?.city}</p>
+        <div className="flex items-center mt-4">
+          <span className={`px-3 py-1 text-sm rounded-full ${storeData?.isVerified ? "bg-green-500 text-white" : "bg-red-500 text-white"}`}>
+            {storeData?.isVerified ? "Verified Store" : "Not Verified"}
+          </span>
         </div>
-      )}
+      </div>
 
-      {/* Store Name and Description */}
-      {storeData ? (
-        <div>
-          <div className="mb-4">
-            <p className="font-medium text-lg sm:text-xl">
-              <strong>Shop Name:</strong> {storeData.storeName}
-            </p>
-            <p className="text-gray-600 sm:text-lg">
-              <strong>Description:</strong> {storeData.shopDescription}
-            </p>
-            <p className="text-gray-600 sm:text-lg">
-              <strong>Address:</strong> {storeData.address.line1}, {storeData.address.city}, {storeData.address.zipCode}
-            </p>
-          </div>
+      <div className="p-6">
+        <img
+          src={storeData?.storeImageUrl || "https://via.placeholder.com/200"}
+          alt={storeData?.storeName}
+          className="w-40 h-40 mx-auto object-cover rounded-full shadow-md mb-4"
+        />
 
-          {/* Store Verification Status */}
-          <div className="mb-4">
-            <p>
-              <strong>Status:</strong>
-              {storeData.isVerified ? (
-                <span className="text-green-600"> Store Verified</span>
-              ) : (
-                <span className="text-red-600"> Not Verified</span>
-              )}
-            </p>
-          </div>
-
-          {/* Store Status Switch */}
-          <div className="flex items-center space-x-4 mb-6">
-            <p className="font-medium text-lg sm:text-xl">Store Status:</p>
-            <div className="flex items-center">
-              <label htmlFor="statusToggle" className="inline-flex relative items-center cursor-pointer">
-                <input
-                  type="checkbox"
-                  id="statusToggle"
-                  className="sr-only peer"
-                  checked={storeData.status}
-                  onChange={handleStoreStatus}
-                />
-                <div className="w-12 h-6 bg-gray-200 rounded-full peer peer-checked:bg-green-600 peer-checked:after:translate-x-6 peer-checked:after:bg-white peer-checked:after:border-green-600 after:content-[''] after:absolute after:left-0.5 after:top-0.5 after:w-5 after:h-5 after:bg-white after:border after:rounded-full transition-all"></div>
-              </label>
-            </div>
-            <span className="ml-2 text-sm sm:text-base text-gray-500">
-              {storeData.status ? "Open" : "Closed"}
-            </span>
-          </div>
-
-          {/* Action Buttons */}
-          <div className="flex flex-col sm:flex-row sm:space-x-4">
-            <button
-              onClick={handleEditStore}
-              className="bg-blue-600 text-white py-2 px-4 rounded-md w-full sm:w-auto mb-2 sm:mb-0"
-            >
-              Edit Store
-            </button>
-            <button
-              onClick={handleStoreStatus}
-              className={`py-2 px-4 rounded-md w-full sm:w-auto ${storeData.status ? 'bg-green-600' : 'bg-red-600'} text-white`}
-            >
-              {storeData.status ? "STORE IS OPEN" : "STORE IS CLOSED"}
-            </button>
-          </div>
+        <div className="text-center mb-6">
+          <p className="text-gray-700">
+            <strong>Description:</strong> {storeData?.shopDescription || "No description available."}
+          </p>
+          <p className="text-gray-700">
+            <strong>Category:</strong> {storeData?.category || "Not specified"}
+          </p>
+          <p className="text-gray-700">
+            <strong>Contact:</strong> {storeData?.contactNumber || "Not available"}
+          </p>
+          <p className="text-gray-700">
+            <strong>Opening Hours:</strong> {storeData?.openingHours || "Not available"}
+          </p>
         </div>
-      ) : (
-        <p>No store found. You can create one by filling out the form below.</p>
-      )}
+
+        <div className="flex justify-center items-center space-x-4 mb-6">
+          <button
+            onClick={handleEditStore}
+            className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-md transition duration-300"
+          >
+            Edit Store
+          </button>
+          <button
+            onClick={handleStoreStatus}
+            className={`px-4 py-2 rounded-md transition duration-300 ${
+              storeData?.status ? "bg-green-500 hover:bg-green-600" : "bg-red-500 hover:bg-red-600"
+            } text-white`}
+          >
+            {storeData?.status ? "Close Store" : "Open Store"}
+          </button>
+       
+        </div>
+      </div>
     </div>
   );
 };
