@@ -16,6 +16,7 @@ import Orders from "./Orders";
 import Addresses from "./Addresses";
 import Settings from "./Settings";
 import EditProfile from "./EditProfile";
+import LoaderComponent from "./LoaderComponent";
 
 const Profile = () => {
   const [userDetails, setUserDetails] = useState(null);
@@ -63,7 +64,13 @@ const Profile = () => {
     return () => unsubscribe();
   }, [navigate]);
 
-  if (isLoading) return <p>Loading...</p>;
+
+  if (isLoading) {
+    return (
+      <LoaderComponent/>
+      
+    );
+  }
 
   return (
     <div className="flex min-h-screen bg-gray-100">

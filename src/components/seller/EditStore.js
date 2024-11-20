@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { firestore, doc, updateDoc, getDoc, storage, ref, uploadBytes, getDownloadURL } from "../../../firebase";
+import LoaderComponent from "../LoaderComponent";
 
 const EditStore = () => {
   const { storeId } = useParams(); // Store ID from URL params
@@ -128,8 +129,12 @@ const EditStore = () => {
     }
   };
 
+
   if (!storeData) {
-    return <p>Loading...</p>;
+    return (
+      <LoaderComponent/>
+      
+    );
   }
 
   return (
