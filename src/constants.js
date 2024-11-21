@@ -59,12 +59,9 @@ return  { SWIGGY_DAPI, SWIGGY_MAPI , SWIGGY_MENU_API } ;
 export default constants;
 
 export const IMG_CDN_URL ="https://media-assets.swiggy.com/swiggy/image/upload/fl_lossy,f_auto,q_auto,w_508,h_320,c_fill/";
- // "https://res.cloudinary.com/swiggy/image/upload/fl_lossy,f_auto,q_auto,w_508,h_320,c_fill/";
 
-// export const FETCH_MENU_URL =
-//   "https://www.swiggy.com/dapi/menu/v4/full?lat=" +lat+"&lng=" +lng+"&menuId=";
 
-// "https://www.swiggy.com/dapi/restaurants/list/v5?lat="+  12.9395989 +"&lng=" + 77.728955 + "&page_type=DESKTOP_WEB_LISTING"
+export const YOUR_GOOGLE_MAPS_API_KEY="AIzaSyCUDX0-EeJE5q9nL2iLIyZvX3h-nDY3gFM";
 
 
 export const restaurantList = [
@@ -799,7 +796,5 @@ export const restaurantList = [
   },
 ];
 
-// const location = useGeoLocation();
-// const lat = location.coordinates.lat;
-// const lng = location.coordinates.lng;
+
 
