@@ -13,7 +13,7 @@ const useGeoLocation = () => {
     setLocation({
       ...location,
       loaded: true,
-      coordinates: { lat: latitude, lng: longitude },
+      coordinates: { lat: latitude, lng: longitude},
     });
 
     // Fetch address using reverse geocoding

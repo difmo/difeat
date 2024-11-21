@@ -27,15 +27,15 @@ const Cart = () => {
   const [grandTotal, setGrandTotal] = useState(0);
   const [isRazorpayLoaded, setIsRazorpayLoaded] = useState(false);
 
-  useEffect(() => {
-    const fetchAddresses = async () => {
-      const addressesCollectionRef = collection(firestore, "difeatusers", auth.currentUser.uid, "addresses");
-      const addressSnapshot = await getDocs(addressesCollectionRef);
-      const addressesList = addressSnapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
-      setAddresses(addressesList);
-    };
-    fetchAddresses();
-  }, []);
+  // useEffect(() => {
+  //   const fetchAddresses = async () => {
+  //     const addressesCollectionRef = collection(firestore, "difeatusers", auth.currentUser.uid, "addresses");
+  //     const addressSnapshot = await getDocs(addressesCollectionRef);
+  //     const addressesList = addressSnapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
+  //     setAddresses(addressesList);
+  //   };
+  //   fetchAddresses();
+  // }, []);
   
   useEffect(() => {
     calculateTotals();

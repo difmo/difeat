@@ -83,10 +83,11 @@ const Header = () => {
                 onClick={() => navigate("/login")}
                 className="mr-4 login-btn flex items-center text-[#fb0b0f] bg-transparent border-none cursor-pointer"
               >
-                <i className="fa-solid fa-user-circle text-2xl text-[#fb0b0f]"></i> Login
+                <i className="fa-solid fa-user-circle text-2xl text-[#fb0b0f]"></i>
               </button>
             )}
           </div>
+
 
           {/* Desktop Navigation Links */}
           <ul className="items-center hidden gap-3 mr-8 text-lg font-medium lg:flex lg:gap-6 md:gap-12">

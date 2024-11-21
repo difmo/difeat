@@ -147,8 +147,7 @@ const Body = (
         </div>
       </div>
       <div>
-        {/* {location.loaded ? JSON.stringify(location) : "location is not available"} */}
-        {location?.address}
+        {/* {location?.address} */}
       </div>
       <div className="flex flex-col items-center justify-center gap-2 my-2 md:flex-row md:flex-wrap md:my-0 ">
         {/* You have to write logic for NO restraunt fount here */}
