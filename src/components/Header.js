@@ -73,20 +73,26 @@ const Header = () => {
       <div className="sticky top-0 z-50 flex items-center justify-between w-full px-2 py-1 text-[#fb0b0f] shadow bg-white lg:px-6 md:px-8">
         <div className="flex items-center gap-3 text-sm font-normal whitespace-nowrap md:gap-6 md:font-semibold md:text-lg">
           <Title />
-           <div className="hidden md:block">
-            {/* Show full location in desktop view */}
-            <p   className=" text-sm text-black">
-            {location?.address ? location?.address : "Location not found"}
-            </p>
-           
+          <div className="flex items-center gap-2 md:gap-3 ml-10">
+            {/* Desktop View */}
+            <div className="hidden md:flex items-center gap-2 text-sm font-medium text-black">
+              <i className="fa-solid fa-map-marker-alt text-lg text-[#fb0b0f]"></i>
+              <p>
+                {location?.address
+                  ? location?.address.slice(0, 40) + (location?.address.length > 40 ? "..." : "")
+                  : "Select your location"}
+              </p>
+            </div>
+
+            {/* Mobile View */}
+            <div className="flex md:hidden">
+              <i
+                className="fa-solid fa-map-marker-alt text-lg text-[#fb0b0f] cursor-pointer"
+                title={location?.address || "Location not found"}
+              ></i>
+            </div>
           </div>
-          <div className="block md:hidden">
-            {/* Show location icon in mobile view */}
-            <i
-              className="fa-solid fa-map-marker-alt text-lg text-[#fb0b0f] cursor-pointer"
-              title={location?.address || "Location not found"}
-            ></i>
-          </div>
+
         </div>
 
 
