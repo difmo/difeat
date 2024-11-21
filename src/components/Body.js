@@ -46,18 +46,19 @@ const Body = (
         }
         const storesCollectionRef = collection(firestore, "stores");
         const storesSnapshot = await getDocs(storesCollectionRef);
-        const stores = storesSnapshot.docs.map((doc) => ({...doc.data(),
+        const stores = storesSnapshot.docs.map((doc) => ({
+          ...doc.data(),
         }));
-  
-        setAllStores(stores); 
-        setFilteredStores(stores); 
+
+        setAllStores(stores);
+        setFilteredStores(stores);
       } catch (error) {
         console.error("Error fetching data:", error);
       } finally {
         // setIsLoading(false); 
       }
     };
-  
+
     const unsubscribe = onAuthStateChanged(auth, (user) => {
       if (user) {
         fetchUserData(user.uid);
@@ -65,14 +66,14 @@ const Body = (
         // navigate("/"); 
       }
     });
-  
+
     return () => unsubscribe();
-  }, []); 
-  
+  }, []);
 
 
 
- 
+
+
   useEffect(() => {
     getStores();
   }, []);
@@ -81,11 +82,12 @@ const Body = (
     try {
       const storesCollectionRef = collection(firestore, "stores");
       const storesSnapshot = await getDocs(storesCollectionRef);
-      const stores = storesSnapshot.docs.map((doc) => ({...doc.data(),
+      const stores = storesSnapshot.docs.map((doc) => ({
+        ...doc.data(),
       }));
 
-      setAllStores(stores); 
-      setFilteredStores(stores); 
+      setAllStores(stores);
+      setFilteredStores(stores);
     } catch (error) {
       console.error("Error fetching data:", error);
     } finally {
@@ -93,12 +95,20 @@ const Body = (
     }
   };
 
+
+  
+    // Use the custom hook to get the user's location
+    const location = useGeoLocation();
+
   const isOnline = useOnline();
 
   if (!isOnline) {
     return <h1>🔴 Offline, please check your internet connection!!</h1>;
   }
 
+
+
+  
 
   if (allStores?.length === 0) return <Shimmer />;
   return (
@@ -117,13 +127,13 @@ const Body = (
           <button
             className="text-xs font-medium shadow-md px-2 py-2 outline-none  rounded bg-[#fb0b0f] hover:bg-green-500 transition-all duration-200 ease-in-out text-white"
             onClick={() => {
-              
+
               const filteredStores = allStores.filter(
                 (store) =>
                   store?.storeName
                     .toLowerCase()
                     .includes(searchText.toLowerCase()) ||
-                    store?.shopDescription
+                  store?.shopDescription
                     .join(", ")
                     .toLowerCase()
                     .includes(searchText.toLowerCase())
@@ -137,21 +147,17 @@ const Body = (
         </div>
       </div>
       <div>
-         {location.loaded ? JSON.stringify(location) : "location is not available"}
+        {location.loaded ? JSON.stringify(location) : "location is not available"}
         {location?.coordinates?.lat}
       </div>
-      <div className="flex flex-col items-center justify-center gap-2 my-2 md:flex-row md:flex-wrap md:my-0">
+      <div className="flex flex-col items-center justify-center gap-2 my-2 md:flex-row md:flex-wrap md:my-0 ">
         {/* You have to write logic for NO restraunt fount here */}
-        {filteredStores?.map((store) => {
-          return (
-            <Link
-              to={"/restaurant/" + store.storeId}
-              key={store.storeId}
-            >
-              <RestaurantCard resData={store} user={user} />
-            </Link>
-          );
-        })}
+        <div className="grid gap-6 grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 mb-10">
+          {filteredStores?.map((store) => (
+            <RestaurantCard key={store.storeId} resData={store} />
+          ))}
+        </div>
+
       </div>
     </div>
   );
