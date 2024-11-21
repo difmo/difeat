@@ -146,14 +146,19 @@ const Body = (
           </button>
         </div>
       </div>
-      <div>
+      {/* <div>
         {location?.address}
-      </div>
+      </div> */}
       <div className="flex flex-col items-center justify-center gap-2 my-2 md:flex-row md:flex-wrap md:my-0 ">
         {/* You have to write logic for NO restraunt fount here */}
         <div className="grid gap-6 grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 mb-10">
           {filteredStores?.map((store) => (
+              <Link
+              to={"/restaurant/" + store.storeId}
+              key={store.storeId}
+            >
             <RestaurantCard key={store.storeId} resData={store} />
+            </Link>
           ))}
         </div>
 

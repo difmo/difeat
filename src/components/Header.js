@@ -5,14 +5,7 @@ import useOnline from "../utils/useOnline";
 import userContext from "../utils/userContext";
 import { useSelector } from "react-redux";
 import BottomNav from "./BottomNav";
-import {
-  auth,
-  onAuthStateChanged,
-  signOut,
-  doc,
-  firestore,
-  getDoc,
-} from "../../firebase";
+import { auth, onAuthStateChanged, signOut, doc, firestore, getDoc } from "../../firebase";
 import useGeoLocation from "./useGeoLocation";
 
 // Logo component
@@ -31,6 +24,8 @@ const Header = () => {
   const [profileImageUrl, setProfileImageUrl] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const cartItems = useSelector((store) => store.cart.items);
+  // Use the custom hook to get the user's location
+
 
   // Manage login state based on token presence
   const [isLoggedin, setIsLoggedin] = useState(!!localStorage.getItem("token"));
@@ -78,9 +73,12 @@ const Header = () => {
       <div className="sticky top-0 z-50 flex items-center justify-between w-full px-2 py-1 text-[#fb0b0f] shadow bg-white lg:px-6 md:px-8">
         <div className="flex items-center gap-3 text-sm font-normal whitespace-nowrap md:gap-6 md:font-semibold md:text-lg">
           <Title />
-          <div className="hidden md:block">
+           <div className="hidden md:block">
             {/* Show full location in desktop view */}
+            <p   className=" text-sm text-black">
             {location?.address ? location?.address : "Location not found"}
+            </p>
+           
           </div>
           <div className="block md:hidden">
             {/* Show location icon in mobile view */}
@@ -90,6 +88,7 @@ const Header = () => {
             ></i>
           </div>
         </div>
+
 
         <div className="flex items-center gap-4">
           {/* Profile or Login Button for Mobile */}
@@ -108,24 +107,17 @@ const Header = () => {
             )}
           </div>
 
+
+
           {/* Desktop Navigation Links */}
           <ul className="items-center hidden gap-3 mr-8 text-lg font-medium lg:flex lg:gap-6 md:gap-12">
-            <Link
-              to="/"
-              className="px-1 transition-all duration-300 ease-in-out text-[#fb0b0f] hover:text-orange-900 hover:bg-gray-200 hover:rounded"
-            >
+            <Link to="/" className="px-1 transition-all duration-300 ease-in-out text-[#fb0b0f] hover:text-orange-900 hover:bg-gray-200 hover:rounded">
               <li>Home</li>
             </Link>
-            <Link
-              to="/food"
-              className="px-1 transition-all duration-300 ease-in-out text-[#fb0b0f] hover:text-orange-900 hover:bg-gray-200 hover:rounded"
-            >
+            <Link to="/food" className="px-1 transition-all duration-300 ease-in-out text-[#fb0b0f] hover:text-orange-900 hover:bg-gray-200 hover:rounded">
               <li>Food</li>
             </Link>
-            <Link
-              to="/water"
-              className="px-1 transition-all duration-300 ease-in-out text-[#fb0b0f] hover:text-orange-900 hover:bg-gray-200 hover:rounded"
-            >
+            <Link to="/water" className="px-1 transition-all duration-300 ease-in-out text-[#fb0b0f] hover:text-orange-900 hover:bg-gray-200 hover:rounded">
               <li>Water</li>
             </Link>
             <li>
@@ -149,9 +141,9 @@ const Header = () => {
                   }
                   className="logout-btn"
                 >
-                  {userDetails?.profile?.name ??
-                    userDetails?.profile?.phoneNumber ??
-                    "Guest"}
+                  {userDetails?.profile?.name
+                    ?? userDetails?.profile?.phoneNumber
+                    ?? "Guest"}
                 </button>
               ) : (
                 <button onClick={() => navigate("/login")} className="login-btn">
