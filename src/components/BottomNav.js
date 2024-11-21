@@ -2,37 +2,46 @@ import { Link } from "react-router-dom";
 import { useSelector } from "react-redux";
 
 const BottomNav = () => {
-  const cartItems = useSelector((store) => store.cart.items); // Get cart items from the Redux store
+  const cartItems = useSelector((store) => store.cart.items);
 
   return (
-    <div className="fixed bottom-0 left-0 right-0 flex justify-around p-2 bg-white shadow-lg lg:hidden">
-      <Link to="/" className="flex flex-col items-center text-[#fb0b0f]">
-        <i className="fa-solid fa-house-user"></i>
-        <span>Home</span>
+    <div className="fixed bottom-0 left-0 right-0 flex justify-around py-3 bg-white shadow-md border-t border-gray-200 z-50 lg:hidden">
+      {/* Home Link */}
+      <Link
+        to="/"
+        className="flex flex-col items-center text-gray-600 hover:text-[#fb0b0f] transition duration-300 ease-in-out"
+      >
+        <i className="fa-solid fa-house-user text-xl"></i>
+        <span className="text-xs mt-1">Home</span>
       </Link>
-      {/* Commented out About and Contact links for future use
-      <Link to="/about" className="flex flex-col items-center text-[#fb0b0f]">
-        <i className="fa-solid fa-info-circle"></i>
-        <span>About</span>
+
+      {/* Food Link */}
+      <Link
+        to="/food"
+        className="flex flex-col items-center text-gray-600 hover:text-[#fb0b0f] transition duration-300 ease-in-out"
+      >
+        <i className="fa-solid fa-utensils text-xl"></i>
+        <span className="text-xs mt-1">Food</span>
       </Link>
-      <Link to="/contact" className="flex flex-col items-center text-[#fb0b0f]">
-        <i className="fa-solid fa-envelope"></i>
-        <span>Contact</span>
+
+      {/* Water Link */}
+      <Link
+        to="/water"
+        className="flex flex-col items-center text-gray-600 hover:text-[#fb0b0f] transition duration-300 ease-in-out"
+      >
+        <i className="fa-solid fa-glass-water text-xl"></i>
+        <span className="text-xs mt-1">Water</span>
       </Link>
-      */}
-      <Link to="/food" className="flex flex-col items-center text-[#fb0b0f]">
-        <i className="fa-solid fa-utensils"></i>
-        <span>Food</span>
-      </Link>
-      <Link to="/water" className="flex flex-col items-center text-[#fb0b0f]">
-        <i className="fa-solid fa-glass-water"></i>
-        <span>Water</span>
-      </Link>
-      <Link to="/cart" className="flex flex-col items-center text-[#fb0b0f] relative">
-        <i className="fa-solid fa-cart-shopping"></i>
-        <span>Cart</span>
-        {cartItems.length > 0 && ( // Only show count if there are items in the cart
-          <span className="absolute top-[-8px] right-[-12px] text-[#fb0b0f] bg-white text-[#fb0b0f] w-4 h-4 rounded-full flex justify-center items-center text-xs">
+
+      {/* Cart Link */}
+      <Link
+        to="/cart"
+        className="flex flex-col items-center text-gray-600 hover:text-[#fb0b0f] transition duration-300 ease-in-out relative"
+      >
+        <i className="fa-solid fa-cart-shopping text-xl"></i>
+        <span className="text-xs mt-1">Cart</span>
+        {cartItems.length > 0 && (
+          <span className="absolute top--15 bottom-8 right--0 left-3  text-white bg-[#fb0b0f] w-5 h-5 rounded-full flex justify-center items-center text-[10px] font-bold shadow-md">
             {cartItems.length}
           </span>
         )}
