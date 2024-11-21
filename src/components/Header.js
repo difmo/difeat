@@ -5,7 +5,15 @@ import useOnline from "../utils/useOnline";
 import userContext from "../utils/userContext";
 import { useSelector } from "react-redux";
 import BottomNav from "./BottomNav";
-import { auth, onAuthStateChanged, signOut, doc, firestore, getDoc } from "../../firebase";
+import {
+  auth,
+  onAuthStateChanged,
+  signOut,
+  doc,
+  firestore,
+  getDoc,
+} from "../../firebase";
+import useGeoLocation from "./useGeoLocation";
 
 // Logo component
 const Title = () => (
@@ -16,7 +24,7 @@ const Title = () => (
 
 const Header = () => {
   const navigate = useNavigate();
-  const location = useLocation();
+  const location = useGeoLocation();
   const isOnline = useOnline();
   const { user } = useContext(userContext);
   const [userDetails, setUserDetails] = useState(null);
@@ -37,8 +45,8 @@ const Header = () => {
           setUserDetails(userData);
           setProfileImageUrl(userData.profile?.profileImageUrl || "");
           setIsLoading(false);
-        }else{
-          console.log("User Details : ","Not found");
+        } else {
+          console.log("User Details : ", "Not found");
           setIsLoading(false);
         }
       } catch (error) {
@@ -70,7 +78,19 @@ const Header = () => {
       <div className="sticky top-0 z-50 flex items-center justify-between w-full px-2 py-1 text-[#fb0b0f] shadow bg-white lg:px-6 md:px-8">
         <div className="flex items-center gap-3 text-sm font-normal whitespace-nowrap md:gap-6 md:font-semibold md:text-lg">
           <Title />
+          <div className="hidden md:block">
+            {/* Show full location in desktop view */}
+            {location?.address ? location?.address : "Location not found"}
+          </div>
+          <div className="block md:hidden">
+            {/* Show location icon in mobile view */}
+            <i
+              className="fa-solid fa-map-marker-alt text-lg text-[#fb0b0f] cursor-pointer"
+              title={location?.address || "Location not found"}
+            ></i>
+          </div>
         </div>
+
         <div className="flex items-center gap-4">
           {/* Profile or Login Button for Mobile */}
           <div className="flex items-center lg:hidden">
@@ -88,16 +108,24 @@ const Header = () => {
             )}
           </div>
 
-
           {/* Desktop Navigation Links */}
           <ul className="items-center hidden gap-3 mr-8 text-lg font-medium lg:flex lg:gap-6 md:gap-12">
-            <Link to="/" className="px-1 transition-all duration-300 ease-in-out text-[#fb0b0f] hover:text-orange-900 hover:bg-gray-200 hover:rounded">
+            <Link
+              to="/"
+              className="px-1 transition-all duration-300 ease-in-out text-[#fb0b0f] hover:text-orange-900 hover:bg-gray-200 hover:rounded"
+            >
               <li>Home</li>
             </Link>
-            <Link to="/food" className="px-1 transition-all duration-300 ease-in-out text-[#fb0b0f] hover:text-orange-900 hover:bg-gray-200 hover:rounded">
+            <Link
+              to="/food"
+              className="px-1 transition-all duration-300 ease-in-out text-[#fb0b0f] hover:text-orange-900 hover:bg-gray-200 hover:rounded"
+            >
               <li>Food</li>
             </Link>
-            <Link to="/water" className="px-1 transition-all duration-300 ease-in-out text-[#fb0b0f] hover:text-orange-900 hover:bg-gray-200 hover:rounded">
+            <Link
+              to="/water"
+              className="px-1 transition-all duration-300 ease-in-out text-[#fb0b0f] hover:text-orange-900 hover:bg-gray-200 hover:rounded"
+            >
               <li>Water</li>
             </Link>
             <li>
@@ -121,9 +149,9 @@ const Header = () => {
                   }
                   className="logout-btn"
                 >
-                  {userDetails?.profile?.name
-                    ?? userDetails?.profile?.phoneNumber
-                    ?? "Guest"}
+                  {userDetails?.profile?.name ??
+                    userDetails?.profile?.phoneNumber ??
+                    "Guest"}
                 </button>
               ) : (
                 <button onClick={() => navigate("/login")} className="login-btn">
