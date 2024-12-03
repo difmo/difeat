@@ -6,7 +6,7 @@ import { ShimmerMenu } from "./Shimmer";
 import RestaurantCategory from "./RestaurantCategory";
 import useStore from "../utils/useStore";
 import LoaderComponent from "./LoaderComponent";
-
+ 
 const RestaurantMenu = () => {
   const { resId } = useParams();
   const { store, products,isLoading, error } = useStore(resId);
@@ -37,10 +37,16 @@ const RestaurantMenu = () => {
 
 
   return (
-    <div className="flex flex-col w-[100%] md:w-2/3  border m-auto w-full">
-      <div className="flex flex-col justify-between p-4  border-b md:flex-row gap-3 bg-black w-full">
+    <div className="flex flex-col   md:w-2/3   m-auto w-full">
+      <div>
+      <h2 className="text-2xl py-5 font-bold text-gray-900 truncate">
+      {store?.storeName}
+        </h2>
+        
+      </div>
+      {/* <div className=" p-4  border-b md:flex-row gap-3  border rounded-2xl w-full">
         <div className="flex flex-col text-xs text-[#e5e6ec] font-medium gap-1">
-          {/* <h1>Restraunt id: {resId}</h1> */}
+           
           <span className="text-xl font-bold text-white">
             {store?.storeName}
           </span>
@@ -48,8 +54,7 @@ const RestaurantMenu = () => {
             {store?.types}
           </span>
           <span className="">
-            {/* {restaurant?.cards[2]?.card?.card?.info?.areaName},{" "}
-            {restaurant?.cards[2]?.card?.card?.info?.city}{" "} */}
+          
             <span className="text-orange-600 font-bold">𖡡</span>
           </span>
           <span className="flex">
@@ -68,9 +73,42 @@ const RestaurantMenu = () => {
             store?.storeImageUrl
           }
         />
-      </div>
+        <div className="flex items-center space-x-2    py-2  ">
+  <span className="text-[#fa4b0a] text-2xl font-bold">★</span>
+  <span className="text-gray-800 text-lg font-semibold">
+    <span className="text-[#fa4b0a]">4.2</span> (89 ratings) • ₹700 for two
+  </span>
+</div>
+<div>
+Pizzas, Fast Food
+  
+</div>
 
-      <div className="flex gap-8 items-center border-b p-4 text-sm md:text-base">
+      </div> */}
+
+<div className="p-4 border-b border rounded-2xl w-full bg-white shadow-lg shadow-black/5">
+  <div className="flex items-center justify-between">
+    <div className="flex items-center space-x-2 py-2">
+      <span className="text-[#24a247] text-2xl font-bold">★</span>
+      <span className="text-gray-800 text-lg font-semibold">
+        <span className="text-[#24a247]">4.2</span> (89 ratings) • ₹700 for two
+      </span>
+    </div>
+  </div>
+  <div className="text-gray-600 text-sm font-medium mt-1">
+    <span className="text-[#fa4b0a] hover:underline cursor-pointer">Pizzas</span>, <span className="text-[#fa4b0a] hover:underline cursor-pointer">Fast Food</span>
+  </div>
+  <div className="mt-2 text-sm text-gray-700 space-y-1">
+    <div>
+      <span className="font-bold">Outlet:</span> GOMTI NAGAR
+    </div>
+    <div>30–35 mins</div>
+  </div>
+</div>
+
+
+
+      {/* <div className="flex gap-8 items-center border-b p-4 text-sm md:text-base">
         <div className="flex items-center gap-2 font-semibold">
           <svg
             className="RestaurantTimeCost_icon__8UdT4"
@@ -117,12 +155,11 @@ const RestaurantMenu = () => {
             ></path>
           </svg>
           <span className="">
-            {/* {store?.costForTwo} */}
+            
           </span>
         </div>
-      </div>
-
-    
+      </div> */}
+ 
       <RestaurantCategory
           data={products}
           storeId={store.storeId}/>
