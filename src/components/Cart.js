@@ -15,7 +15,7 @@ const Cart = () => {
   const [showLocationModal, setShowLocationModal] = useState(false);
 
   const cartItems = useSelector((store) => store.cart.items);
-
+console.log(cartItems, "cartItems");
   const storeId = useSelector((store) => store.cart.items[0]?.storeId);
   const dispatch = useDispatch();
 
