@@ -13,7 +13,7 @@ const ItemList = ({items,storeId}) => {
         name: item.name,
         price: item.price || item.price,
         productImageUrl: item?.productImageUrl,
-        quantity: item.inStock,
+        quantity: item.quantity,
         productId: item?.productId,
         description: item?.description,
         category:item?.category

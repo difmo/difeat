@@ -23,12 +23,12 @@ const Products = ({ storeId, userId }) => {
     description: "",
     price: 0.0,
     category: "",
-    stock: 0,
+    quantity: 0,
     SKU: "",
     productImageUrl: ""
   });
   const [logoFile, setLogoFile] = useState(null);
-  
+
   console.log("storeId", storeId);
 
   useEffect(() => {
@@ -36,7 +36,7 @@ const Products = ({ storeId, userId }) => {
       const productsCollectionRef = collection(firestore, "stores", storeId, "products");
       const productSnapshot = await getDocs(productsCollectionRef);
       const productsList = productSnapshot.docs.map((doc) => ({
-        id: doc.id,
+        productId: doc.id,
         ...doc.data()
       }));
       setProducts(productsList);
@@ -44,7 +44,6 @@ const Products = ({ storeId, userId }) => {
     fetchProducts();
   }, [storeId]);
 
-  // Upload logo to Firebase Storage
   const uploadLogo = async () => {
     if (!logoFile) return "";
     const logoRef = ref(storage, `productLogos/${storeId}/${logoFile.name}`);
@@ -63,35 +62,48 @@ const Products = ({ storeId, userId }) => {
     });
   };
 
-  // Add a new product
   const handleAddProduct = async () => {
-    const createdBy = auth ? auth.currentUser.uid : null; 
+    const createdBy = auth ? auth.currentUser.uid : null;
     console.log(createdBy);
     console.log(storeId);
-
+  
     try {
       const logoUrl = await uploadLogo();
-      const productData = { 
-        ...newProduct, 
-        createdBy: createdBy, 
+  
+      const productData = {
+        ...newProduct,
+        createdBy,
         productImageUrl: logoUrl,
-        price: parseFloat(newProduct.price) // Ensure price is a float
+        price: parseFloat(newProduct.price),
+        quantity: parseInt(newProduct.quantity, 10) // Ensure quantity is an integer
       };
-
-      console.log(productData);
+  
+      // Reference to the product collection
       const productCollectionRef = collection(firestore, "stores", storeId, "products");
+  
+      // Add the new product
       const docRef = await addDoc(productCollectionRef, productData);
-
-      setProducts([...products, { id: docRef.id, ...productData }]);
-      setNewProduct({ name: "", description: "", price: 0.0, category: "", stock: 0, SKU: "", productImageUrl: "" });
+  
+      // Optionally, update the document with the generated productId if you want it in the document itself
+      await updateDoc(docRef, {
+        productId: docRef.id
+      });
+  
+      // Update state with new product including productId
+      setProducts([...products, { productId: docRef.id, ...productData }]);
+      
+      // Clear input fields
+      setNewProduct({ name: "", description: "", price: 0.0, category: "", quantity: 0, SKU: "", productImageUrl: "" });
       setLogoFile(null);
+  
+      // Notify user
       alert("Product added successfully.");
     } catch (error) {
       console.error("Error adding product:", error);
     }
   };
+  
 
-  // Update an existing product
   const handleSaveEdit = async (productId) => {
     try {
       let logoUrl = isEditingProduct.productImageUrl;
@@ -99,17 +111,18 @@ const Products = ({ storeId, userId }) => {
         logoUrl = await uploadLogo();
       }
 
-      const productData = { 
-        ...isEditingProduct, 
+      const productData = {
+        ...isEditingProduct,
         productImageUrl: logoUrl,
-        price: parseFloat(isEditingProduct.price) // Ensure price is a float
+        price: parseFloat(isEditingProduct.price),
+        quantity: parseInt(isEditingProduct.quantity, 10) // Ensure quantity is an integer
       };
 
       const productDocRef = doc(firestore, "stores", storeId, "products", productId);
-
       await updateDoc(productDocRef, productData);
+
       setProducts(products.map((product) =>
-        product.id === productId ? productData : product
+        product.productId === productId ? productData : product
       ));
       setIsEditingProduct(null);
       setLogoFile(null);
@@ -119,12 +132,11 @@ const Products = ({ storeId, userId }) => {
     }
   };
 
-  // Delete a product
   const handleDeleteProduct = async (productId) => {
     try {
       const productDocRef = doc(firestore, "stores", storeId, "products", productId);
       await deleteDoc(productDocRef);
-      setProducts(products.filter((product) => product.id !== productId));
+      setProducts(products.filter((product) => product.productId !== productId));
       alert("Product deleted successfully.");
     } catch (error) {
       console.error("Error deleting product:", error);
@@ -134,11 +146,11 @@ const Products = ({ storeId, userId }) => {
   return (
     <div className="p-6 bg-white shadow-md rounded-lg">
       <h2 className="text-2xl font-bold mb-6">Manage Products</h2>
-      
+
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         {products.map((product) => (
-          <div key={product.id} className="border p-4 rounded-lg shadow-sm">
-            {isEditingProduct && isEditingProduct.id === product.id ? (
+          <div key={product.productId} className="border p-4 rounded-lg shadow-sm">
+            {isEditingProduct && isEditingProduct.productId === product.productId ? (
               <div>
                 <input
                   type="text"
@@ -179,11 +191,11 @@ const Products = ({ storeId, userId }) => {
                 <input
                   type="number"
                   className="border p-2 rounded mb-2 w-full"
-                  value={isEditingProduct.stock}
+                  value={isEditingProduct.quantity}
                   onChange={(e) =>
-                    setIsEditingProduct({ ...isEditingProduct, stock: e.target.value })
+                    setIsEditingProduct({ ...isEditingProduct, quantity: e.target.value })
                   }
-                  placeholder="Stock"
+                  placeholder="Quantity"
                 />
                 <input
                   type="text"
@@ -201,7 +213,7 @@ const Products = ({ storeId, userId }) => {
                 />
                 <div className="flex space-x-4 mt-2">
                   <button
-                    onClick={() => handleSaveEdit(product.id)}
+                    onClick={() => handleSaveEdit(product.productId)}
                     className="text-green-600"
                   >
                     Save
@@ -220,9 +232,15 @@ const Products = ({ storeId, userId }) => {
                 <p>{product.description}</p>
                 <p>${product.price}</p>
                 <p>Category: {product.category}</p>
-                <p>Stock: {product.stock}</p>
+                <p>Quantity: {product.quantity}</p>
                 <p>SKU: {product.SKU}</p>
-                {product.productImageUrl && <img src={product.productImageUrl} alt="Product Logo" className="w-16 h-16 mt-2" />}
+                {product.productImageUrl && (
+                  <img
+                    src={product.productImageUrl}
+                    alt="Product Logo"
+                    className="w-16 h-16 mt-2"
+                  />
+                )}
                 <div className="flex space-x-4 mt-2">
                   <button
                     onClick={() => setIsEditingProduct(product)}
@@ -231,7 +249,7 @@ const Products = ({ storeId, userId }) => {
                     <FaEdit /> Edit
                   </button>
                   <button
-                    onClick={() => handleDeleteProduct(product.id)}
+                    onClick={() => handleDeleteProduct(product.productId)}
                     className="text-red-600"
                   >
                     <FaTrashAlt /> Delete
@@ -276,9 +294,9 @@ const Products = ({ storeId, userId }) => {
         <input
           type="number"
           className="border p-2 rounded mb-2 w-full"
-          value={newProduct.stock}
-          onChange={(e) => setNewProduct({ ...newProduct, stock: e.target.value })}
-          placeholder="Stock"
+          value={newProduct.quantity}
+          onChange={(e) => setNewProduct({ ...newProduct, quantity: e.target.value })}
+          placeholder="Quantity"
         />
         <input
           type="text"
@@ -292,14 +310,12 @@ const Products = ({ storeId, userId }) => {
           className="border p-2 rounded mb-2 w-full"
           onChange={(e) => setLogoFile(e.target.files[0])}
         />
-        <div className="flex space-x-4 mt-2">
-          <button
-            onClick={handleAddProduct}
-            className="text-green-600"
-          >
-            <FaPlusCircle /> Add Product
-          </button>
-        </div>
+        <button
+          onClick={handleAddProduct}
+          className="text-green-600 mt-2"
+        >
+          <FaPlusCircle /> Add Product
+        </button>
       </div>
     </div>
   );

@@ -19,7 +19,7 @@ const Cart = () => {
   const storeId = useSelector((store) => store.cart.items[0]?.storeId);
   const dispatch = useDispatch();
 
-  console.log('sdfjj',storeId);
+  console.log('sdfjj', storeId);
 
   const totalAmount = useRef(0);
   const [tax, setTax] = useState(0);
@@ -42,73 +42,88 @@ const Cart = () => {
   const handleClearCart = () => dispatch(clearCart());
 
   const calculateTotals = () => {
-    totalAmount.current = cartItems.reduce(
-      (total, item) => total + item.price * item.quantity,
-      0
-    );
+    console.log('cartItems : ',cartItems);
+    totalAmount.current = cartItems.reduce((total, item) => {
+      const price = Number(item.price);
+      const quantity = Number(item.quantity);
+
+      // Ensure price and quantity are valid numbers
+      if (isNaN(price) || isNaN(quantity)) {
+        console.error(`Invalid price or quantity for item: ${item.id}`);
+        return total; // Skip this item if invalid
+      }
+
+      return total + price * quantity;
+    }, 0);
+
+    // If totalAmount is still NaN, reset to 0
+    if (isNaN(totalAmount.current)) {
+      totalAmount.current = 0;
+    }
+
     const calculatedTax = totalAmount.current * GST_RATE;
     setTax(calculatedTax);
     setGrandTotal(totalAmount.current + calculatedTax + DELIVERY_CHARGE);
   };
 
   const handleCheckout = async () => {
-    const createdBy = auth? auth.currentUser.uid : null; 
+    const createdBy = auth ? auth.currentUser.uid : null;
     console.log(createdBy);
     console.log(storeId);
     console.log(grandTotal);
     console.log(totalAmount);
 
-    // if (!isRazorpayLoaded) {
-    //   alert("Payment SDK not loaded. Please try again later.");
-    //   return;
-    // }
+    if (!isRazorpayLoaded) {
+      alert("Payment SDK not loaded. Please try again later.");
+      return;
+    }
 
-    // const options = {
-    //   key: "rzp_test_5JTg9I35AkiZMQ", // Replace with your Razorpay key
-    //   amount: grandTotal * 100, // Convert to smallest currency unit (paise)
-    //   currency: "INR",
-    //   name: "DifEat Services",
-    //   description: "Order Payment",
-    //   image: "https://example.com/logo.png", 
-    //   handler: async function (response) {
-    //     const orderDate = new Date();
-    //     const deliveryDate = new Date();
-    //     deliveryDate.setDate(orderDate.getDate() + 1); 
-        
-    //     const orderData = {
-    //       userId: createdBy,
-    //       storeId: storeId,
-    //       products: cartItems,
-    //       totalPrice: grandTotal,
-    //       status: "pending",
-    //       createdAt: new Date().toISOString(),
-    //       location: currentLocation,
-    //       orderId: response.razorpay_payment_id,
-    //       orderDate: orderDate,           
-    //       deliveryDate: deliveryDate,   
-    //     };
-    //     try {
-    //       const ordersCollectionRef = collection(firestore, "orders");
-    //       await addDoc(ordersCollectionRef, orderData);
-    //       handleClearCart();
-    //       alert("Your order has been placed successfully!");
-    //     } catch (error) {
-    //       console.error("Error saving order to Firestore: ", error);
-    //       alert("There was an issue placing your order. Please try again.");
-    //     }
-    //   },
-    //   prefill: {
-    //     name: "Dinesh kumar", 
-    //     email: "dinesh@gmail.com",
-    //     contact: "8853389395",
-    //   },
-    //   theme: {
-    //     color: "#3399cc",
-    //   },
-    // };
+    const options = {
+      key: "rzp_test_5JTg9I35AkiZMQ", 
+      amount: grandTotal * 100, 
+      currency: "INR",
+      name: "DifEat Services",
+      description: "Order Payment",
+      image: "https://example.com/logo.png", 
+      handler: async function (response) {
+        const orderDate = new Date();
+        const deliveryDate = new Date();
+        deliveryDate.setDate(orderDate.getDate() + 1); 
+        const orderData = {
+          userId: createdBy,
+          storeId: storeId,
+          products: cartItems,
+          totalPrice: grandTotal,
+          status: "pending",
+          createdAt: new Date().toISOString(),
+          location: currentLocation,
+          orderId: response.razorpay_payment_id,
+          orderDate: orderDate,           
+          deliveryDate: deliveryDate,   
+        };
+        console.log(orderData);
+        // try {
+          const ordersCollectionRef = collection(firestore, "orders");
+          await addDoc(ordersCollectionRef, orderData);
+          handleClearCart();
+          alert("Your order has been placed successfully!");
+        // } catch (error) {
+        //   console.error("Error saving order to Firestore: ", error);
+        //   alert("There was an issue placing your order. Please try again.");
+        // }
+      },
+      prefill: {
+        name: "Dinesh kumar", 
+        email: "dinesh@gmail.com",
+        contact: "8853389395",
+      },
+      theme: {
+        color: "#3399cc",
+      },
+    };
 
-    // const rzp1 = new window.Razorpay(options); // Use window.Razorpay
-    // rzp1.open();
+    const rzp1 = new window.Razorpay(options); // Use window.Razorpay
+    rzp1.open();
   };
 
   const handleLocationChange = (address) => {
@@ -209,31 +224,20 @@ const Cart = () => {
         {showLocationModal && (
           <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
             <div className="w-11/12 max-w-md p-4 bg-white rounded-md shadow-lg">
-              <h3 className="text-lg font-semibold mb-4">Select Address</h3>
-              <ul className="space-y-3">
-
-                {addresses.map((address, index) => (
+              <h3 className="text-lg font-semibold mb-2">Select Delivery Address</h3>
+              <ul>
+                {addresses.map((address) => (
                   <li
-                    key={index}
-                    className="p-2 border rounded-md cursor-pointer hover:bg-gray-100"
+                    key={address.id}
+                    className="px-4 py-2 mb-2 border rounded-md cursor-pointer hover:bg-gray-100"
                     onClick={() => handleLocationChange(address)}
                   >
-
-                    <div>
-                      <div className="flex items-center mb-2">
-                        <IconBasedOnLabel label={address.label} />
-                        <span className="ml-2 text-sm font-semibold">{address.label}</span>
-                      </div>
-                      <p className="text-xs text-gray-500">
-                        {address.line1}, {address.city}, {address.zipCode}
-                      </p>
-                    </div>
+                    {address.line1}, {address.city}, {address.zipCode}
                   </li>
                 ))}
               </ul>
-
               <button
-                className="w-full px-4 py-2 mt-4 text-sm font-semibold text-white bg-gray-600 rounded-md hover:bg-gray-700"
+                className="w-full mt-4 px-4 py-2 text-white bg-gray-700 rounded-md hover:bg-gray-800"
                 onClick={() => setShowLocationModal(false)}
               >
                 Close
@@ -244,19 +248,6 @@ const Cart = () => {
       </div>
     </div>
   );
-};
-
-const IconBasedOnLabel = ({ label }) => {
-  switch (label) {
-    case "Home":
-      return <FaHome />;
-    case "Work":
-      return <FaBriefcase />;
-    case "Other":
-      return <FaBuilding />;
-    default:
-      return <FaHome />;
-  }
 };
 
 export default Cart;

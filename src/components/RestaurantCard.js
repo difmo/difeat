@@ -16,11 +16,11 @@ const RestaurantCard = (props) => {
 
   return (
     <div className="flex flex-col bg-white rounded-xl shadow-md hover:shadow-lg transition-all duration-300 w-full max-w-[280px] overflow-hidden">
-      {/* Image Section with Gradient Overlay */}
+     
       <div className="relative">
         <img
           className="w-full h-40 object-cover"
-          src={storeImageUrl || "/placeholder.jpg"} // Fallback image
+          src={storeImageUrl || "/placeholder.jpg"} //Fallback Image
           alt={storeName}
         />
         <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent rounded-t-xl"></div>
