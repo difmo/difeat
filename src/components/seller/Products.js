@@ -10,25 +10,28 @@ import {
   storage,
   ref,
   uploadBytesResumable,
-  getDownloadURL
+  getDownloadURL,
+  auth
 } from "../../../firebase";
 import { FaTrashAlt, FaEdit, FaPlusCircle } from "react-icons/fa";
 
-const Products = ({ storeId ,userId}) => {
+const Products = ({ storeId, userId }) => {
   const [products, setProducts] = useState([]);
   const [isEditingProduct, setIsEditingProduct] = useState(null);
   const [newProduct, setNewProduct] = useState({
     name: "",
     description: "",
-    price: "",
+    price: 0.0,
     category: "",
     stock: 0,
     SKU: "",
     productImageUrl: ""
   });
-const [logoFile, setLogoFile] = useState(null);
-console.log("storeId",storeId);
-  useEffect(()=> {
+  const [logoFile, setLogoFile] = useState(null);
+  
+  console.log("storeId", storeId);
+
+  useEffect(() => {
     const fetchProducts = async () => {
       const productsCollectionRef = collection(firestore, "stores", storeId, "products");
       const productSnapshot = await getDocs(productsCollectionRef);
@@ -62,15 +65,25 @@ console.log("storeId",storeId);
 
   // Add a new product
   const handleAddProduct = async () => {
+    const createdBy = auth ? auth.currentUser.uid : null; 
+    console.log(createdBy);
+    console.log(storeId);
+
     try {
       const logoUrl = await uploadLogo();
-      const productData = { ...newProduct,createdBy:userId, productImageUrl: logoUrl };
+      const productData = { 
+        ...newProduct, 
+        createdBy: createdBy, 
+        productImageUrl: logoUrl,
+        price: parseFloat(newProduct.price) // Ensure price is a float
+      };
 
+      console.log(productData);
       const productCollectionRef = collection(firestore, "stores", storeId, "products");
       const docRef = await addDoc(productCollectionRef, productData);
 
       setProducts([...products, { id: docRef.id, ...productData }]);
-      setNewProduct({ name: "", description: "", price: "", category: "", stock: 0, SKU: "", productImageUrl: "" });
+      setNewProduct({ name: "", description: "", price: 0.0, category: "", stock: 0, SKU: "", productImageUrl: "" });
       setLogoFile(null);
       alert("Product added successfully.");
     } catch (error) {
@@ -85,7 +98,13 @@ console.log("storeId",storeId);
       if (logoFile) {
         logoUrl = await uploadLogo();
       }
-      const productData = { ...isEditingProduct, productImageUrl: logoUrl };
+
+      const productData = { 
+        ...isEditingProduct, 
+        productImageUrl: logoUrl,
+        price: parseFloat(isEditingProduct.price) // Ensure price is a float
+      };
+
       const productDocRef = doc(firestore, "stores", storeId, "products", productId);
 
       await updateDoc(productDocRef, productData);
@@ -273,9 +292,14 @@ console.log("storeId",storeId);
           className="border p-2 rounded mb-2 w-full"
           onChange={(e) => setLogoFile(e.target.files[0])}
         />
-        <button onClick={handleAddProduct} className="bg-blue-500 text-white p-2 rounded">
-          <FaPlusCircle /> Add Product
-        </button>
+        <div className="flex space-x-4 mt-2">
+          <button
+            onClick={handleAddProduct}
+            className="text-green-600"
+          >
+            <FaPlusCircle /> Add Product
+          </button>
+        </div>
       </div>
     </div>
   );
