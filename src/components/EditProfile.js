@@ -71,14 +71,14 @@ const EditProfile = () => {
   const handleEditProfile = async () => {
     try {
       let imageUrl = profileImageUrl;
-
+  
       if (profileImage) {
         const storageRef = ref(storage, `profileImages/${auth.currentUser.uid}`);
         await uploadBytes(storageRef, profileImage);
         imageUrl = await getDownloadURL(storageRef);
         setProfileImageUrl(imageUrl);
       }
-
+  
       const userDocRef = doc(firestore, "difeatusers", auth.currentUser.uid);
       const updatedProfile = {
         ...userDetails.profile,
@@ -86,20 +86,56 @@ const EditProfile = () => {
         email: userDetails.profile.email || "",
         profileImageUrl: imageUrl,
       };
-
+  
       await updateDoc(userDocRef, { profile: updatedProfile });
-
+  
       setUserDetails((prevState) => ({
         ...prevState,
         profile: updatedProfile,
       }));
-
+  
       setIsEditingProfile(false);
       alert("Profile updated successfully.");
+  
+      // Refresh the page after updating the profile
+      window.location.reload();
     } catch (error) {
       console.error("Error updating profile:", error);
     }
   };
+  
+  // const handleEditProfile = async () => {
+  //   try {
+  //     let imageUrl = profileImageUrl;
+
+  //     if (profileImage) {
+  //       const storageRef = ref(storage, `profileImages/${auth.currentUser.uid}`);
+  //       await uploadBytes(storageRef, profileImage);
+  //       imageUrl = await getDownloadURL(storageRef);
+  //       setProfileImageUrl(imageUrl);
+  //     }
+
+  //     const userDocRef = doc(firestore, "difeatusers", auth.currentUser.uid);
+  //     const updatedProfile = {
+  //       ...userDetails.profile,
+  //       name: userDetails.profile.name || "Guest",
+  //       email: userDetails.profile.email || "",
+  //       profileImageUrl: imageUrl,
+  //     };
+
+  //     await updateDoc(userDocRef, { profile: updatedProfile });
+
+  //     setUserDetails((prevState) => ({
+  //       ...prevState,
+  //       profile: updatedProfile,
+  //     }));
+
+  //     setIsEditingProfile(false);
+  //     alert("Profile updated successfully.");
+  //   } catch (error) {
+  //     console.error("Error updating profile:", error);
+  //   }
+  // };
 
   const handleProfileImageChange = (e) => {
     const file = e.target.files[0];
@@ -174,7 +210,7 @@ const EditProfile = () => {
         {/* Save Button */}
         <button
           onClick={handleEditProfile}
-          className="mt-4 bg-blue-600 text-white px-6 py-3 rounded-lg w-full hover:bg-blue-700 focus:outline-none"
+          className="mt-4 bg-[#ee740f] text-white px-6 py-3 rounded-lg font-medium w-full hover:bg-[#fc8019] focus:outline-none"
         >
           Save Changes
         </button>

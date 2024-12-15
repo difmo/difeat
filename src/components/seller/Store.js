@@ -88,8 +88,8 @@ const Store = () => {
   }
 
   return (
-    <div className="max-w-4xl mx-auto mt-10 bg-white rounded-lg shadow-lg overflow-hidden">
-      <div className="bg-gradient-to-r from-blue-500 to-blue-700 p-6">
+    <div className="max-w-full  mt-10 bg-white rounded-lg shadow-lg overflow-hidden">
+      <div className="bg-gradient-to-r bg-[#fc8019] p-6">
         <h2 className="text-2xl font-semibold text-white">{storeData?.storeName}</h2>
         <p className="text-gray-200 text-sm">{storeData?.address?.line1}, {storeData?.address?.city}</p>
         <div className="flex items-center mt-4">
@@ -99,46 +99,7 @@ const Store = () => {
         </div>
       </div>
 
-      <div className="p-6">
-        <img
-          src={storeData?.storeImageUrl || "https://via.placeholder.com/200"}
-          alt={storeData?.storeName}
-          className="w-40 h-40 mx-auto object-cover rounded-full shadow-md mb-4"
-        />
-
-        <div className="text-center mb-6">
-          <p className="text-gray-700">
-            <strong>Description:</strong> {storeData?.shopDescription || "No description available."}
-          </p>
-          <p className="text-gray-700">
-            <strong>Category:</strong> {storeData?.category || "Not specified"}
-          </p>
-          <p className="text-gray-700">
-            <strong>Contact:</strong> {storeData?.contactNumber || "Not available"}
-          </p>
-          <p className="text-gray-700">
-            <strong>Opening Hours:</strong> {storeData?.openingHours || "Not available"}
-          </p>
-        </div>
-
-        <div className="flex justify-center items-center space-x-4 mb-6">
-          <button
-            onClick={handleEditStore}
-            className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-md transition duration-300"
-          >
-            Edit Store
-          </button>
-          <button
-            onClick={handleStoreStatus}
-            className={`px-4 py-2 rounded-md transition duration-300 ${
-              storeData?.status ? "bg-green-500 hover:bg-green-600" : "bg-red-500 hover:bg-red-600"
-            } text-white`}
-          >
-            {storeData?.status ? "Close Store" : "Open Store"}
-          </button>
-       
-        </div>
-      </div>
+      <div className="max-w-full mt-10 bg-white rounded-lg shadow-lg overflow-hidden flex"> <div className="p-6 flex-none"> <img src={storeData?.storeImageUrl || "https://via.placeholder.com/200"} alt={storeData?.storeName} className="w-40 h-40 object-cover rounded-full shadow-md" /> </div> <div className="p-6 flex-grow"> <div className="mb-6"> <p className="text-gray-700"> <strong>Description:</strong> {storeData?.shopDescription || "No description available."} </p> <p className="text-gray-700"> <strong>Category:</strong> {storeData?.category || "Not specified"} </p> <p className="text-gray-700"> <strong>Contact:</strong> {storeData?.contactNumber || "Not available"} </p> <p className="text-gray-700"> <strong>Opening Hours:</strong> {storeData?.openingHours || "Not available"} </p> </div> <div className="flex space-x-4"> <button onClick={handleEditStore} className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-md transition duration-300" > Edit Store </button> <button onClick={handleStoreStatus} className={`px-4 py-2 rounded-md transition duration-300 ${ storeData?.status ? "bg-green-500 hover:bg-green-600" : "bg-red-500 hover:bg-red-600" } text-white`} > {storeData?.status ? "Close Store" : "Open Store"} </button> </div> </div> </div>
     </div>
   );
 };

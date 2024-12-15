@@ -137,8 +137,12 @@ const BecomeStoreKeeperForm = ({ userId }) => {
         isUser: false,         
       };
       setUser(userData);
-      navigate("/"); 
-      alert("You are now a StoreKeeper!");
+      // navigate("/"); 
+      // alert("You are now a StoreKeeper!");
+      await signOut(auth);  // Log out the user
+
+      alert("You are now a StoreKeeper! Please log in again.");
+      navigate("/login");
       setFormData({
         storeName: "",
         shopDescription: "",
@@ -210,7 +214,7 @@ const BecomeStoreKeeperForm = ({ userId }) => {
       <button
         type="submit"
         disabled={isUploading}
-        className="w-full bg-blue-600 text-white py-2 rounded-md hover:bg-blue-700 transition-colors duration-150"
+        className="w-full bg-[#fd790d] text-white py-2 rounded-md hover:bg-[#b6580b] transition-colors duration-150"
       >
         {isUploading ? "Uploading..." : "Submit and Become StoreKeeper"}
       </button>

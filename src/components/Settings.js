@@ -63,7 +63,7 @@ const Settings = () => {
       <h3 className="font-semibold mb-2">Store Details</h3>
       <button onClick={() => {
         setStoreForm(!isStoreForm);
-      }} className="bg-red-600 text-white py-2 px-4 rounded-md ml-2">
+      }} className="bg-[#ee740f] text-white py-2 px-4 rounded-md ml-2">
         Become a seller
       </button>
       {isStoreForm ? <BecomeStoreKeeperForm userId={userId}/> : <h1></h1>}

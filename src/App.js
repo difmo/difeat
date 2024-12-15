@@ -16,34 +16,34 @@ const App = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [userDetails,setUserDetails]=useState(null);
   const [isStoreKeeper,setIsStoreKeeper]=useState(false);
-  // useEffect(() => {
-  //   const fetchUserData = async (userUid) => {
-  //     try {
-  //       const userDocRef = doc(firestore, "difeatusers", userUid);
-  //       const userDoc = await getDoc(userDocRef);
-  //       if (userDoc.exists()) {
-  //         const userData = userDoc.data();
-  //         setIsStoreKeeper(userData?.roles?.isStoreKeeper || false);
-  //         console.log('user from online  : ',userData);
-  //       }
+  useEffect(() => {
+    const fetchUserData = async (userUid) => {
+      try {
+        const userDocRef = doc(firestore, "difeatusers", userUid);
+        const userDoc = await getDoc(userDocRef);
+        if (userDoc.exists()) {
+          const userData = userDoc.data();
+          setIsStoreKeeper(userData?.roles?.isStoreKeeper || false);
+          console.log('user from online  : ',userData);
+        }
 
-  //     } catch (error) {
-  //       console.error("Error fetching data:", error);
-  //     } finally {
-  //       setIsLoading(false);
-  //     }
-  //   };
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
 
-  //   // const unsubscribe = onAuthStateChanged(auth, (user) => {
-  //   //   if (user) {
-  //   //     fetchUserData(user.uid);
-  //   //   } else {
-  //   //     // navigate("/");
-  //   //   }
-  //   // });
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      if (user) {
+        fetchUserData(user.uid);
+      } else {
+        // navigate("/");
+      }
+    });
 
-  //   // return () => unsubscribe();
-  // }, []);
+    return () => unsubscribe();
+  }, []);
 
 
 

@@ -30,12 +30,12 @@ import SellerOrders from "./SellerOrders";
 import LoaderComponent from "../LoaderComponent";
 
 const Dashboard = () => {
+  const [isSidebarOpen, setSidebarOpen] = useState(false);
   const [userDetails, setUserDetails] = useState(null);
-  const [isLoading, setIsLoading] = useState(true);
-  const [isEditingProfile, setIsEditingProfile] = useState(false);
-  const [profileImageUrl, setProfileImageUrl] = useState("");
   const [storeData, setStoreData] = useState(null);
+  const [isLoading, setIsLoading] = useState(true);
   const [activeTab, setActiveTab] = useState("Home");
+  const [isSigningOut, setIsSigningOut] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -46,10 +46,8 @@ const Dashboard = () => {
         if (userDoc.exists()) {
           const userData = userDoc.data();
           setUserDetails(userData);
-          setProfileImageUrl(
-            userData.profile?.profileImageUrl || "https://via.placeholder.com/150"
-          );
         }
+
         const storesCollectionRef = collection(firestore, "stores");
         const q = query(storesCollectionRef, where("userId", "==", userUid));
         const querySnapshot = await getDocs(q);
@@ -75,74 +73,125 @@ const Dashboard = () => {
     return () => unsubscribe();
   }, [navigate]);
 
+
   if (isLoading) {
     return <LoaderComponent />;
   }
+  const handleSignOut = async () => {
+    try {
+      await signOut(auth); // Sign out the user
+      navigate("/login");  // Redirect to the login page
+    } catch (error) {
+      console.error("Error during sign out:", error);
+    }
+  };
+  // const handleSignOut2 = async () => {
+  //   setIsSigningOut(true); // Show loader or disable buttons
+  //   try {
+  //     await signOut(auth); // Sign out the user
+  //     navigate("/login"); // Redirect to the login page
+  //   } catch (error) {
+  //     console.error("Error during sign-out:", error);
+  //     alert("Failed to sign out. Please try again."); // Notify user of error
+  //   } finally {
+  //     setIsSigningOut(false); // Reset loading state
+  //   }
+  // };
+
+  const menuItems = [
+    { text: "Home", icon: <FaHome />, onClick: () => setActiveTab("Home") },
+    { text: "Edit Profile", icon: <FaUserEdit />, onClick: () => setActiveTab("Edit Profile") },
+    { text: "Store", icon: <FaStore />, onClick: () => setActiveTab("Store") },
+    { text: "Orders", icon: <FaClipboardList />, onClick: () => setActiveTab("Orders") },
+    { text: "Products", icon: <FaShoppingBag />, onClick: () => setActiveTab("Products") },
+    { text: "Settings", icon: <FaCog />, onClick: () => setActiveTab("SellerSettings") },
+    {
+      text: isSigningOut ? "Signing Out..." : "Sign Out",
+      icon: <FaSignOutAlt />,
+      onClick: handleSignOut,
+      disabled: isSigningOut, // Disable the button if signing out
+    },
+  ];
+
 
   return (
-    <div className="flex min-h-screen bg-gradient-to-br from-gray-100 to-gray-200">
+    <div className="flex min-h-screen bg-gray-100 w-full">
       {/* Sidebar */}
-      <div className="w-64 bg-gradient-to-b from-orange-500 to-orange-600 text-white flex flex-col p-6">
-        <div className="text-center mb-10">
-          <img
-            src={profileImageUrl}
-            alt="Profile"
-            className="w-24 h-24 rounded-full object-cover mx-auto shadow-lg mb-4"
-          />
-          <h2 className="text-2xl font-semibold">{userDetails?.profile?.name}</h2>
-          <p className="text-sm opacity-80">{userDetails?.profile?.phoneNumber}</p>
-          <p className="text-sm opacity-80">{userDetails?.profile?.email}</p>
+      <aside
+        className={`fixed top-0 left-0 z-50  min-h-screen bg-[#fc8019] text-white transform ${
+          isSidebarOpen ? "translate-x-0" : "-translate-x-full"
+        } md:relative md:translate-x-0 transition-transform w-64`}
+      >
+        <div className="p-6 text-2xl font-bold flex justify-between items-center">
+          Admin Panel
           <button
-            onClick={() => setIsEditingProfile(!isEditingProfile)}
-            className="mt-4 flex items-center justify-center text-white bg-orange-400 rounded-lg py-2 px-4 font-medium shadow-md border border-white hover:bg-orange-500 hover:border-orange-300 transition duration-200"
+            className="md:hidden text-xl"
+            onClick={() => setSidebarOpen(false)}
           >
-            Edit Profile
+            ✖
           </button>
-
         </div>
-
-        <nav className="space-y-4">
-          {[
-            { label: "Home", icon: <FaHome />, tab: "Home" }, 
-            { label: "Store", icon: <FaStore />, tab: "Store" },
-            { label: "Orders", icon: <FaClipboardList />, tab: "Orders" },
-            { label: "Products", icon: <FaShoppingBag />, tab: "Products" },
-            { label: "Settings", icon: <FaCog />, tab: "SellerSettings" },
-          ].map(({ label, icon, tab }) => (
-            <button
-              key={tab}
-              onClick={() => {
-                setActiveTab(tab);
-                setIsEditingProfile(false);
-              }}
-              className={`flex items-center py-3 px-4 rounded-lg transition-all duration-200 ${activeTab === tab
-                  ? "bg-white text-orange-500 shadow-md font-bold"
-                  : "hover:bg-orange-700 hover:text-white opacity-90"
-                }`}
-            >
-              {icon} <span className="ml-3">{label}</span>
-            </button>
-          ))}
-          <button
-            onClick={() => signOut(auth)}
-            className="mt-auto flex items-center py-3 px-4 rounded-lg opacity-90 hover:bg-orange-700 hover:text-white transition"
-          >
-            <FaSignOutAlt className="mr-3" /> Sign Out
-          </button>
+        <nav>
+          <ul>
+            {menuItems.map((item, index) => (
+              <li
+                key={index}
+                className="flex  text-xl font-semibold items-center p-4 hover:bg-[#ee720d] cursor-pointer"
+                onClick={item.onClick}
+              >
+                <span className="mr-4 text-lg">{item.icon}</span>
+                {item.text}
+              </li>
+            ))}
+          </ul>
         </nav>
-      </div>
+      </aside>
 
-      {/* Content Area */}
-      <div className="flex-1 p-8 bg-white rounded-tl-3xl shadow-lg">
-        {isEditingProfile && <EditProfile />}
-        {activeTab === "Home" && storeData && <Home storeId={storeData.storeId} />}
-        {activeTab === "Store" && <Store />}
-        {activeTab === "Orders" && <SellerOrders storeId={storeData.storeId} />}
-        {activeTab === "Products" && <Products storeId={storeData.storeId} />}
-        {activeTab === "SellerSettings" && <SellerSettings storeId={storeData.storeId} />}
-      </div>
+      {/* Overlay for Mobile */}
+      {isSidebarOpen && (
+        <div
+          className="fixed inset-0 bg-black bg-opacity-50 md:hidden"
+          onClick={() => setSidebarOpen(false)}
+        ></div>
+      )}
+
+      {/* Main Content */}
+      <main className="flex-1 p-6 ml-0 md:ml-0 transition-all">
+        <header className="flex justify-between items-center mb-6">
+          <button
+            className="md:hidden text-xl"
+            onClick={() => setSidebarOpen(true)}
+          >
+            ☰
+          </button>
+          <h1 className="text-3xl font-bold">Dashboard</h1>
+          {/* <button
+            className="bg-[#bd5b0b] text-white px-4 py-2 rounded hover:bg-[#fd790d]"
+            // onClick={async () => {
+            //   await signOut(auth);
+            //   navigate("/login");
+            // }}
+            onClick={handleSignOut}
+          >
+            Logout 
+          </button> */}
+        </header>
+
+        {/* Active Tab Content */}
+        <div>
+          {activeTab === "Home" && storeData && <Home storeId={storeData.storeId} />}
+          {activeTab === "Edit Profile" && <EditProfile />}
+          {activeTab === "Store" && <Store />}
+          {activeTab === "Orders" && <SellerOrders storeId={storeData.storeId} />}
+          {activeTab === "Products" && <Products storeId={storeData.storeId} />}
+          {activeTab === "SellerSettings" && <SellerSettings storeId={storeData.storeId} />}
+        </div>
+      </main>
     </div>
   );
 };
 
 export default Dashboard;
+
+
+ 

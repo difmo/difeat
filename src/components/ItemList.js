@@ -1,4 +1,4 @@
-import { IMG_CDN_URL } from "../constants";
+ 
 import { addItem } from "../utils/cartSlice";
 import { useDispatch } from "react-redux";
 
@@ -27,7 +27,8 @@ const ItemList = ({ items, storeId }) => {
         return (
           <div
             className="flex flex-col md:flex-row justify-between items-center border rounded-lg shadow-sm bg-white p-4 mb-6 hover:shadow-md transition-shadow duration-300"
-            key={item?.card?.info?.id}
+            // key={item?.card?.info?.id}
+            key={item.id}
           >
             {/* Left Section */}
             <div className="flex flex-col gap-3 w-full md:w-3/4">

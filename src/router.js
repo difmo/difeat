@@ -23,6 +23,7 @@ import Contact from "./components/Contact";
 import EditStore from "./components/seller/EditStore";
 import SellerLayout from "./components/SellerLayout";
 import Dashboard from "./components/seller/Dashboard";
+import AdminProfile from "./components/AdminProfile";
 
 
 // Router Configuration
@@ -86,7 +87,8 @@ const userRouter = createBrowserRouter([
       },
       {
         path: "/profile",
-        element: <Profile />,
+        // element: <Profile />,
+        element: <AdminProfile />,
       },
       {
         path: "/",
@@ -134,6 +136,10 @@ const sellerRouter = createBrowserRouter([
       {
         path: "/edit-store/:storeId",
         element: <EditStore />,
+      },
+      {
+        path: "/login",
+        element: <Login />,
       },
       {
         path: "/",

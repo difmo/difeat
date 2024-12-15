@@ -2,6 +2,7 @@ import { useState } from "react";
 import ItemList from "./ItemList";
 
 const RestaurantCategory = ({data,storeId}) => {
+  // const [showIndex, setShowIndex] = useState(0);
     const handleClick=()=>{
       setShowIndex();
     }

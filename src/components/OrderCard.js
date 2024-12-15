@@ -17,7 +17,7 @@ const OrderCard = ({order}) => {
   if (!store) {
     return <div>No store found for the provided ID: {order.storeId}</div>;
   }
-console.log(store);
+console.log(store, "store");
   return (
     <div
       key={order.id}
