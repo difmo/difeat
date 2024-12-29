@@ -24,13 +24,17 @@ import EditStore from "./components/seller/EditStore";
 import SellerLayout from "./components/SellerLayout";
 import Dashboard from "./components/seller/Dashboard";
 import AdminProfile from "./components/AdminProfile";
+import ScrollToTop from "./components/ScrollToTop";
 
 
 // Router Configuration
 const userRouter = createBrowserRouter([
   {
     path: "/",
-    element: <AppLayout />,
+    element:  <AppLayout>
+        <ScrollToTop />
+        <Outlet />
+      </AppLayout>,
     errorElement: <Error />,
     children: [
       {
