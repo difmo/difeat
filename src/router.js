@@ -33,7 +33,7 @@ const userRouter = createBrowserRouter([
     path: "/",
     element:  <AppLayout>
         <ScrollToTop />
-        <Outlet />
+     
       </AppLayout>,
     errorElement: <Error />,
     children: [

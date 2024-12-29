@@ -8,7 +8,10 @@ import {
   RecaptchaVerifier,
   PhoneAuthProvider,
   signInWithCredential,
-  doc, setDoc, firestore, getDoc
+  doc,
+  setDoc,
+  firestore,
+  getDoc,
 } from "../../firebase";
 import { useContext } from "react";
 import userContext from "../utils/userContext";
@@ -45,7 +48,6 @@ const Login = () => {
           },
         }
       );
-
 
       // Ensure recaptcha renders correctly
       recaptchaVerifier
@@ -86,26 +88,29 @@ const Login = () => {
     }
   };
 
-
   const handleOtpSubmit = async (values) => {
     if (!verificationId) {
-      const errorMessage = "Verification ID is missing. Please request a new OTP.";
+      const errorMessage =
+        "Verification ID is missing. Please request a new OTP.";
       console.error(errorMessage);
       alert(errorMessage);
       return;
     }
-  
-    setLoading(true);  // Start loading
+
+    setLoading(true); // Start loading
     try {
-      const credential = PhoneAuthProvider.credential(verificationId, values.otp);
+      const credential = PhoneAuthProvider.credential(
+        verificationId,
+        values.otp
+      );
       const userCredential = await signInWithCredential(auth, credential);
       const user = userCredential.user;
       console.log("OTP verified successfully. User:", user);
-  
+
       // Check if the user document already exists
       const userDocRef = doc(firestore, "difeatusers", user.uid);
       const userDoc = await getDoc(userDocRef);
-  
+
       if (!userDoc.exists()) {
         // User doesn't exist, create the user document
         const userData = {
@@ -115,11 +120,12 @@ const Login = () => {
             createdAt: new Date().toISOString(),
             name: user.displayName || "Guest",
             email: user.email || "guest@example.com",
-            profileImageUrl: user.photoURL || "https://example.com/default-profile.jpg",
+            profileImageUrl:
+              user.photoURL || "https://example.com/default-profile.jpg",
           },
           roles: {
             isUser: true,
-            isStoreKeeper: false
+            isStoreKeeper: false,
           },
           primaryAddress: null,
           settings: {
@@ -127,56 +133,58 @@ const Login = () => {
             darkMode: false,
           },
         };
-  
+
         // Create user document
         await setDoc(userDocRef, userData);
         console.log("New user created:", user.uid);
-  
-        setLoading(false);  // Stop loading
-        handleLogin(userData, user);  // Pass both userData and user object to handleLogin
+
+        setLoading(false); // Stop loading
+        handleLogin(userData, user); // Pass both userData and user object to handleLogin
       } else {
         // User exists, fetch the existing user data
         const userData = userDoc.data();
         console.log("User already exists in Firestore:", user.uid);
 
-        setLoading(false);  // Stop loading
-        handleLogin(userData, user);  // Pass existing userData and user object to handleLogin
+        setLoading(false); // Stop loading
+        handleLogin(userData, user); // Pass existing userData and user object to handleLogin
       }
-  
     } catch (error) {
-      setLoading(false);  // Stop loading
+      setLoading(false); // Stop loading
       console.error("Error verifying OTP:", error);
       alert(`Error verifying OTP: ${error.message || error}`);
     }
   };
-  
+
   const handleLogin = (userData, user) => {
     if (userData) {
       setUser(userData);
       console.log("Formatted user data:", userData);
       if (userData.roles.isStoreKeeper) {
-        // navigate("/store-dashboard");  
+        // navigate("/store-dashboard");
         navigate("/");
       } else {
         // navigate("/user-dashboard");
         navigate("/");
       }
-      user.getIdToken().then((token) => {
-        console.log("Access token retrieved:", token);
-        localStorage.setItem("token", token);
-        localStorage.setItem("isLoggedIn", "true");
-        console.log("Token and login state saved to localStorage");
-        setLoading(false);
-      }).catch((error) => {
-        setLoading(false);
-        console.error("Error retrieving access token:", error);
-      });
+      user
+        .getIdToken()
+        .then((token) => {
+          console.log("Access token retrieved:", token);
+          localStorage.setItem("token", token);
+          localStorage.setItem("isLoggedIn", "true");
+          console.log("Token and login state saved to localStorage");
+          setLoading(false);
+        })
+        .catch((error) => {
+          setLoading(false);
+          console.error("Error retrieving access token:", error);
+        });
     } else {
       setLoading(false);
       console.log("No user data found");
     }
   };
-  
+
   return (
     <div className="flex items-center justify-center min-h-screen px-4 bg-gradient-to-br from-orange-100">
       <div className="w-full max-w-lg p-8 my-5 bg-white shadow-lg rounded-2xl lg:max-w-md sm:max-w-sm">
@@ -242,7 +250,6 @@ const Login = () => {
                     className="w-full py-3 text-lg font-bold text-white bg-[#fb0b0f] hover:bg-orange-600 sm:text-base"
                   >
                     {loading ? "Please wait ..." : "CONTINUE"}
-
                   </button>
                 </>
               ) : (
@@ -282,21 +289,8 @@ const Login = () => {
             </form>
           )}
         </Formik>
-        <p className="mt-4 text-sm text-center text-gray-500">
-          By clicking on Login, I accept the{" "}
-          <a
-            href="/terms-and-conditions"
-            className="text-orange-500 underline hover:text-orange-600"
-          >
-            Terms & Conditions
-          </a>{" "}
-          &{" "}
-          <a
-            href="/privacy-policy"
-            className="text-orange-500 underline hover:text-orange-600"
-          >
-            Privacy Policy
-          </a>
+        <p  className="mt-4 text-sm text-center text-orange-500 underline cursor-pointer hover:text-orange-600">
+          By clicking on Login, I accept the <span onClick={()=>navigate('/terms-and-conditions')}>Terms & Conditions</span >  & <span onClick={()=>navigate('/privacy-policy')}>Privacy Policy</span>
           .
         </p>
       </div>
