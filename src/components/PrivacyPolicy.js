@@ -74,12 +74,27 @@ const PrivacyPolicy = () => {
             </div>
 
             {/* Section 7 */}
+            
             <div className="p-8 bg-white rounded-lg shadow-md">
               <h2 className="mb-4 text-2xl font-bold">7. Changes to This Policy</h2>
               <p className="text-gray-600">
                 We may update this Privacy Policy as needed to reflect changes in our practices, technology, or legal obligations. Any updates will be posted on this page, and
                 continued use of our services implies acceptance of the updated policy.
               </p>
+            </div>
+            <div className="p-8 bg-white rounded-lg shadow-md">
+              <h2 className="mb-4 text-2xl font-bold">8. App Access Instructions</h2>
+              <p className="text-gray-600">
+              The user enters their identifier, such as a <span className="font-semibold text-black">
+              Phone number - +1 650-555-1234
+                </span> 
+              </p>
+              <p className="text-gray-600">
+  The user inputs their Verification 
+  <span className="font-semibold text-black"> Code - 123456 </span>
+  associated with their account.
+</p>
+
             </div>
           </div>
         </div>
@@ -91,7 +106,7 @@ const PrivacyPolicy = () => {
           <h2 className="mb-8 text-4xl font-bold">Need More Information?</h2>
           <p className="mb-6 text-lg text-gray-600">
             If you have questions about our Privacy Policy, please contact us at{" "}
-            <span className="font-semibold text-indigo-600">+1 650-555-1234</span>.
+            <span className="font-semibold text-indigo-600">difeatservices@gmail.com</span>.
           </p>
         </div>
       </section>
